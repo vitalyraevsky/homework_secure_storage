@@ -10,6 +10,7 @@
     <string name="email_hint">john@mail.czom</string>
     <string name="password">password</string>
     <string name="login">Login</string>
+    <string name="logout">Logout</string>
     <string name="forgot_your_password">Forgot your password?</string>
     <string name="register_now">Register Now</string>
     <string name="already_have_an_account_login_now">Already have an account? <b>Login Now</b></string>

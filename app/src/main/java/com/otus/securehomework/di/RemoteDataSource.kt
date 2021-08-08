@@ -2,6 +2,8 @@ package com.otus.securehomework.di
 
 import android.content.Context
 import com.otus.securehomework.BuildConfig
+import com.otus.securehomework.data.repository.TokenAuthenticator
+import com.otus.securehomework.data.source.network.TokenRefreshApi
 import okhttp3.Authenticator
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
