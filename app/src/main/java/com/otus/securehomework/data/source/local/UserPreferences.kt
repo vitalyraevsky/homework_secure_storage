@@ -14,7 +14,6 @@ class UserPreferences
 @Inject constructor(
     private val context: Context
 ) {
-    private val Context.dataStore by preferencesDataStore(name = dataStoreFile)
 
     val accessToken: Flow<String?>
         get() = context.dataStore.data.map { preferences ->
@@ -24,7 +23,6 @@ class UserPreferences
     val refreshToken: Flow<String?>
         get() = context.dataStore.data.map { preferences ->
             preferences[REFRESH_TOKEN]
-
         }
 
     suspend fun saveAccessTokens(accessToken: String?, refreshToken: String?) {
@@ -41,6 +39,7 @@ class UserPreferences
     }
 
     companion object {
+        private val Context.dataStore by preferencesDataStore(name = dataStoreFile)
         private val ACCESS_TOKEN = stringPreferencesKey("key_access_token")
         private val REFRESH_TOKEN = stringPreferencesKey("key_refresh_token")
     }

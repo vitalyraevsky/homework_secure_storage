@@ -8,9 +8,11 @@ import com.otus.securehomework.R
 import com.otus.securehomework.data.source.local.UserPreferences
 import com.otus.securehomework.presentation.auth.AuthActivity
 import com.otus.securehomework.presentation.startNewActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
 
     @Inject

@@ -19,24 +19,24 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideRemoteDataSource(): RemoteDataSource {
-        return RemoteDataSource()
+    fun provideRemoteDataSource(
+        userPreferences: UserPreferences
+    ): RemoteDataSource {
+        return RemoteDataSource(userPreferences)
     }
 
     @Provides
     fun provideAuthApi(
         remoteDataSource: RemoteDataSource,
-        @ApplicationContext context: Context
     ): AuthApi {
-        return remoteDataSource.buildApi(AuthApi::class.java, context)
+        return remoteDataSource.buildApi(AuthApi::class.java)
     }
 
     @Provides
     fun provideUserApi(
         remoteDataSource: RemoteDataSource,
-        @ApplicationContext context: Context
     ): UserApi {
-        return remoteDataSource.buildApi(UserApi::class.java, context)
+        return remoteDataSource.buildApi(UserApi::class.java)
     }
 
     @Singleton
