@@ -2,8 +2,8 @@
 <network-security-config>
     <base-config cleartextTrafficPermitted="true">
         <trust-anchors>
-            <certificates src="@raw/lets_encrypt_e1" />
-            <certificates src="@raw/lets_encrypt_r3" />
+            <certificates src="@raw/isrgrootx1" />
+            <certificates src="@raw/isrgrootx2" />
             <certificates src="system" />
         </trust-anchors>
     </base-config>
