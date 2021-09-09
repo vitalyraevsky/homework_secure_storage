@@ -2,6 +2,7 @@ package com.otus.securehomework.data.repository
 
 import android.content.Context
 import com.otus.securehomework.data.dto.TokenResponse
+import com.otus.securehomework.data.source.local.SecureUserPreferences
 import com.otus.securehomework.data.source.local.UserPreferences
 import com.otus.securehomework.data.source.network.TokenRefreshApi
 import kotlinx.coroutines.flow.first
@@ -16,10 +17,9 @@ import com.otus.securehomework.data.Response as DataResponse
 
 class TokenAuthenticator @Inject constructor(
     context: Context,
-    private val tokenApi: TokenRefreshApi
+    private val tokenApi: TokenRefreshApi,
+    private val userPreferences: SecureUserPreferences
 ) : Authenticator, BaseRepository(tokenApi) {
-
-    private val userPreferences = UserPreferences(context)
 
     override fun authenticate(route: Route?, response: Response): Request? {
         return runBlocking {
