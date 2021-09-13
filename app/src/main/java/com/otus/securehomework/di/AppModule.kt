@@ -1,7 +1,6 @@
 package com.otus.securehomework.di
 
 import android.content.Context
-import com.otus.securehomework.App
 import com.otus.securehomework.data.repository.AuthRepository
 import com.otus.securehomework.data.repository.UserRepository
 import com.otus.securehomework.data.source.crypto.Keys
@@ -14,7 +13,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -55,10 +53,9 @@ object AppModule {
 
     @Provides
     fun provideAuthRepository(
-        authApi: AuthApi,
-        userPreferences: SecureUserPreferences
+        authApi: AuthApi
     ): AuthRepository {
-        return AuthRepository(authApi, userPreferences)
+        return AuthRepository(authApi)
     }
 
     @Provides

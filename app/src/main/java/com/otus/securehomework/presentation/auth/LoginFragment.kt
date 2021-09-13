@@ -2,6 +2,7 @@ package com.otus.securehomework.presentation.auth
 
 import android.os.Bundle
 import android.view.View
+import androidx.biometric.auth.AuthPromptHost
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -46,6 +47,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 is Response.Failure -> handleApiError(it) { login() }
             }
         })
+        viewModel.hasBiometric.observe(viewLifecycleOwner) {
+            if (it) viewModel.startBiometrics(AuthPromptHost(this))
+        }
         binding.editTextTextPassword.addTextChangedListener {
             val email = binding.editTextTextEmailAddress.text.toString().trim()
             binding.buttonLogin.enable(email.isNotEmpty() && it.toString().isNotEmpty())

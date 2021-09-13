@@ -2,6 +2,7 @@ package com.otus.securehomework.presentation.home
 
 import android.os.Bundle
 import android.view.View
+import androidx.biometric.auth.AuthPromptHost
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.otus.securehomework.R
@@ -40,10 +41,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }
             }
         })
+        viewModel.hasBiometric.observe(viewLifecycleOwner, {
+            binding.buttonBiometric.text = getString(
+                if (it) R.string.disable_biometric_auth else R.string.enable_biometric_auth
+            )
+        })
 
         binding.buttonLogout.setOnClickListener {
             logout()
         }
+        binding.buttonBiometric.setOnClickListener { viewModel.switchBiometric(AuthPromptHost(this)) }
     }
 
     private fun updateUI(user: User) {
