@@ -1,6 +1,5 @@
 package com.otus.securehomework.data.repository
 
-import android.content.Context
 import com.otus.securehomework.data.dto.TokenResponse
 import com.otus.securehomework.data.source.local.SecureUserPreferences
 import com.otus.securehomework.data.source.local.UserPreferences
@@ -14,18 +13,16 @@ import okhttp3.Route
 import javax.inject.Inject
 import com.otus.securehomework.data.Response as DataResponse
 
-
 class TokenAuthenticator @Inject constructor(
-    context: Context,
     private val tokenApi: TokenRefreshApi,
-    private val userPreferences: SecureUserPreferences
+    private val preferences: SecureUserPreferences
 ) : Authenticator, BaseRepository(tokenApi) {
 
     override fun authenticate(route: Route?, response: Response): Request? {
         return runBlocking {
             when (val tokenResponse = getUpdatedToken()) {
                 is DataResponse.Success -> {
-                    userPreferences.saveAccessTokens(
+                    preferences.saveAccessTokens(
                         tokenResponse.value.access_token,
                         tokenResponse.value.refresh_token
                     )
@@ -39,7 +36,7 @@ class TokenAuthenticator @Inject constructor(
     }
 
     private suspend fun getUpdatedToken(): DataResponse<TokenResponse> {
-        val refreshToken = userPreferences.refreshToken.first()
+        val refreshToken = preferences.refreshToken.first()
         return safeApiCall {
             tokenApi.refreshAccessToken(refreshToken)
         }

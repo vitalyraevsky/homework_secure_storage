@@ -9,10 +9,10 @@
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="350dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="72dp"
-        android:src="@mipmap/ic_launcher"
+        app:srcCompat="@drawable/ic_launcher_foreground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

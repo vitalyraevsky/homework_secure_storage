@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="@raw/isrgrootx1" />
+            <certificates src="@raw/isrgrootx2" />
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+    <domain-config>
+        <domain includeSubdomains="true">auth.tragltech.com</domain>
+        <pin-set>
+            <pin digest="SHA-256">dvAWD7qJt9UGvNfgA2v2ipbmKOLaGjkHaFI3n/lnao4=</pin>
+        </pin-set>
+    </domain-config>
+</network-security-config>
