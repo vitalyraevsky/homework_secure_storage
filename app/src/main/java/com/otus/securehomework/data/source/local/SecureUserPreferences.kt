@@ -23,13 +23,20 @@ class SecureUserPreferences @Inject constructor(
     val tempLoginData: Flow<LoginData>
         get() = flowOf(LoginData(getString(TEMP_EMAIL), getString(TEMP_PASSWORD)))
 
+    val iv: Flow<String>
+        get() = flowOf(getString(IV))
+
     fun saveAccessTokens(accessToken: String?, refreshToken: String?) {
         accessToken?.let { put(ACCESS_TOKEN, it) }
-        refreshToken?.let { put(ACCESS_TOKEN, it) }
+        refreshToken?.let { put(REFRESH_TOKEN, it) }
     }
 
     fun saveBiometricData(data: String) {
         put(BIOMETRIC_DATA, data)
+    }
+
+    fun saveIv(iv: String) {
+        put(IV, iv)
     }
 
     fun saveTempLoginData(data: LoginData) {
@@ -48,6 +55,7 @@ class SecureUserPreferences @Inject constructor(
         private const val ACCESS_TOKEN = "secureAccessToken"
         private const val REFRESH_TOKEN = "secureRefreshToken"
         private const val BIOMETRIC_DATA = "secureIsBiometricEnabled"
+        private const val IV = "secureInitializationVector"
         private const val TEMP_EMAIL = "secureTempEmail"
         private const val TEMP_PASSWORD = "secureTempPassword"
     }

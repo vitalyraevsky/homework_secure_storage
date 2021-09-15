@@ -51,6 +51,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             logout()
         }
         binding.buttonBiometric.setOnClickListener { viewModel.switchBiometric(AuthPromptHost(this)) }
+        binding.buttonBiometricTemp.setOnClickListener { viewModel.startBiometric(AuthPromptHost(this)) }
     }
 
     private fun updateUI(user: User) {

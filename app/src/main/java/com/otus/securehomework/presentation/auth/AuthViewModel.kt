@@ -29,6 +29,10 @@ class AuthViewModel
     val loginResponse: LiveData<Response<LoginResponse>>
         get() = _loginResponse
 
+    private val _showBiometricsError: MutableLiveData<String> = MutableLiveData()
+    val showBiometricsError: LiveData<String>
+        get() = _showBiometricsError
+
     val hasBiometric: LiveData<Boolean>
         get() = userPreferences.biometricData.map { it.isNotEmpty() }.asLiveData()
 
@@ -49,6 +53,7 @@ class AuthViewModel
         viewModelScope.launch {
             biometricAuthManager.checkBiometricAuth(host).let {
                 if (it != LoginData.STUB) login(it.email, it.password)
+                else _showBiometricsError.value = "Wrong finger, try again later"
             }
         }
     }

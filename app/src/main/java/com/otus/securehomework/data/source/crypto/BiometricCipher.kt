@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.biometric.BiometricPrompt
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -28,16 +29,18 @@ class BiometricCipher @Inject constructor(
     )
 
     @RequiresApi(Build.VERSION_CODES.M)
-    fun getDecryptor(): BiometricPrompt.CryptoObject = BiometricPrompt.CryptoObject(
-        Cipher.getInstance(TRANSFORMATION)
-            .apply {
-                init(
-                    Cipher.DECRYPT_MODE,
-                    getOrCreateKey(),
-                    GCMParameterSpec(AUTH_TAG_SIZE, iv)
-                )
-            }
-    )
+    fun getDecryptor(iv: ByteArray): BiometricPrompt.CryptoObject {
+        return BiometricPrompt.CryptoObject(
+            Cipher.getInstance(TRANSFORMATION)
+                .apply {
+                    init(
+                        Cipher.DECRYPT_MODE,
+                        getOrCreateKey(),
+                        GCMParameterSpec(AUTH_TAG_SIZE, iv)
+                    )
+                }
+        )
+    }
 
     fun encrypt(plaintext: String, encryptor: Cipher): EncryptedEntity {
         require(plaintext.isNotEmpty()) { "Plaintext cannot be empty" }

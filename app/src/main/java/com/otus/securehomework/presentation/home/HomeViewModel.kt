@@ -45,4 +45,9 @@ class HomeViewModel
         }
         _hasBiometric.value = userPreferences.biometricData.first().isNotEmpty()
     }
+
+    fun startBiometric(host: AuthPromptHost) = viewModelScope.launch {
+            biometricAuthManager.saveBiometricAuth(host)
+        _hasBiometric.value = userPreferences.biometricData.first().isNotEmpty()
+    }
 }

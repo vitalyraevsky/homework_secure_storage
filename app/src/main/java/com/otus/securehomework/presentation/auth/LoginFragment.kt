@@ -10,12 +10,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.otus.securehomework.R
 import com.otus.securehomework.data.Response
-import com.otus.securehomework.presentation.handleApiError
-import com.otus.securehomework.presentation.home.HomeActivity
-import com.otus.securehomework.presentation.startNewActivity
 import com.otus.securehomework.databinding.FragmentLoginBinding
-import com.otus.securehomework.presentation.enable
-import com.otus.securehomework.presentation.visible
+import com.otus.securehomework.presentation.*
+import com.otus.securehomework.presentation.home.HomeActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -47,6 +44,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 is Response.Failure -> handleApiError(it) { login() }
             }
         })
+        viewModel.showBiometricsError.observe(viewLifecycleOwner) {
+            requireView().snackbar(it)
+        }
         viewModel.hasBiometric.observe(viewLifecycleOwner) {
             if (it) viewModel.startBiometrics(AuthPromptHost(this))
         }
