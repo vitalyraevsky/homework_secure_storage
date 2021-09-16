@@ -32,22 +32,17 @@ class HomeViewModel
         get() = _hasBiometric
 
     fun getUser() = viewModelScope.launch {
+        _hasBiometric.value = userPreferences.hasBiometrics.first()
         _user.value = Response.Loading
         _user.value = repository.getUser()
-        _hasBiometric.value = userPreferences.biometricData.first().isNotEmpty()
     }
 
     fun switchBiometric(host: AuthPromptHost) = viewModelScope.launch {
         if (_hasBiometric.value == true) {
-            biometricAuthManager.removeBiometricAuth(host)
+            userPreferences.removeBiometricData()
         } else {
             biometricAuthManager.saveBiometricAuth(host)
         }
-        _hasBiometric.value = userPreferences.biometricData.first().isNotEmpty()
-    }
-
-    fun startBiometric(host: AuthPromptHost) = viewModelScope.launch {
-            biometricAuthManager.saveBiometricAuth(host)
-        _hasBiometric.value = userPreferences.biometricData.first().isNotEmpty()
+        _hasBiometric.value = userPreferences.hasBiometrics.first()
     }
 }

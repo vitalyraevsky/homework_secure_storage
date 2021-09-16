@@ -16,9 +16,12 @@ abstract class BaseSecurePreferences(context: Context, masterKey: MasterKey) {
     }
 
     fun put(key: String, value: String) = preferences.edit().putString(key, value).commit()
+    fun put(key: String, value: Boolean) = preferences.edit().putBoolean(key, value).commit()
 
     fun getString(key: String, defValue: String = ""): String =
         preferences.getString(key, defValue) ?: defValue
+
+    fun getBoolean(key: String, defValue: Boolean = false): Boolean = preferences.getBoolean(key, defValue)
 
     fun remove(key: String) = preferences.edit().remove(key).commit()
 

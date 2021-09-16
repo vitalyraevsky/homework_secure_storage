@@ -2,7 +2,6 @@ package com.otus.securehomework.data.repository
 
 import com.otus.securehomework.data.Response
 import com.otus.securehomework.data.dto.LoginResponse
-import com.otus.securehomework.data.source.local.SecureUserPreferences
 import com.otus.securehomework.data.source.network.AuthApi
 import javax.inject.Inject
 

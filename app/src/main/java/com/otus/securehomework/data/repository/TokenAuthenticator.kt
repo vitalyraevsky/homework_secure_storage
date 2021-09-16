@@ -12,7 +12,7 @@ import okhttp3.Route
 import javax.inject.Inject
 import com.otus.securehomework.data.Response as DataResponse
 
-class TokenAuthenticator @Inject constructor(
+class TokenAuthenticator(
     private val tokenApi: TokenRefreshApi,
     private val preferences: SecureUserPreferences
 ) : Authenticator, BaseRepository(tokenApi) {

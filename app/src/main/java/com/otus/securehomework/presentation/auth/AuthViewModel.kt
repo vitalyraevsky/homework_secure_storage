@@ -9,6 +9,7 @@ import com.otus.securehomework.data.Response
 import com.otus.securehomework.data.dto.LoginData
 import com.otus.securehomework.data.dto.LoginResponse
 import com.otus.securehomework.data.repository.AuthRepository
+import com.otus.securehomework.data.repository.UserRepository
 import com.otus.securehomework.data.source.crypto.BiometricAuthManager
 import com.otus.securehomework.data.source.local.SecureUserPreferences
 import com.otus.securehomework.presentation.BaseViewModel
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class AuthViewModel
 @Inject constructor(
     private val repository: AuthRepository,
+    private val userRepository: UserRepository,
     private val userPreferences: SecureUserPreferences,
     private val biometricAuthManager: BiometricAuthManager
 ) : BaseViewModel(repository) {
@@ -29,12 +31,12 @@ class AuthViewModel
     val loginResponse: LiveData<Response<LoginResponse>>
         get() = _loginResponse
 
-    private val _showBiometricsError: MutableLiveData<String> = MutableLiveData()
-    val showBiometricsError: LiveData<String>
-        get() = _showBiometricsError
+    private val _biometricsInput: MutableLiveData<Boolean> = MutableLiveData()
+    val biometricsInput: LiveData<Boolean>
+        get() = _biometricsInput
 
     val hasBiometric: LiveData<Boolean>
-        get() = userPreferences.biometricData.map { it.isNotEmpty() }.asLiveData()
+        get() = userPreferences.hasBiometrics.asLiveData()
 
     fun login(
         email: String,
@@ -42,7 +44,6 @@ class AuthViewModel
     ) = viewModelScope.launch {
         _loginResponse.value = Response.Loading
         _loginResponse.value = repository.login(email, password)
-        userPreferences.saveTempLoginData(LoginData(email, password))
     }
 
     fun saveAccessTokens(accessToken: String, refreshToken: String) {
@@ -51,10 +52,7 @@ class AuthViewModel
 
     fun startBiometrics(host: AuthPromptHost) {
         viewModelScope.launch {
-            biometricAuthManager.checkBiometricAuth(host).let {
-                if (it != LoginData.STUB) login(it.email, it.password)
-                else _showBiometricsError.value = "Wrong finger, try again later"
-            }
+            _biometricsInput.value = biometricAuthManager.checkBiometricAuth(host)
         }
     }
 }

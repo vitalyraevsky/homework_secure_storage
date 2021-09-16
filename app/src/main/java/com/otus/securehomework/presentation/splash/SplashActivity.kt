@@ -24,7 +24,7 @@ class SplashActivity  : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         userPreferences.accessToken.asLiveData().observe(this, Observer {
-            val activity = if (it == null) {
+            val activity = if (it.isEmpty()) {
                 AuthActivity::class.java
             } else {
                 HomeActivity::class.java
