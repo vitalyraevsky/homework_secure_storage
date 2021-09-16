@@ -42,7 +42,7 @@ class BiometricAuthManager @Inject constructor(
             .setDescription(context.getString(R.string.fingerprint_description))
             .setConfirmationRequired(true)
             .build()
-            .authenticate(host, biometricCipher.getEncryptor())
+            .auth(host, biometricCipher.getEncryptor())
         return true
     }
 
@@ -52,7 +52,7 @@ class BiometricAuthManager @Inject constructor(
             .setDescription(context.getString(R.string.fingerprint_description))
             .setConfirmationRequired(true)
             .build()
-            .authenticate(host)
+            .auth(host)
         return true
     }
 

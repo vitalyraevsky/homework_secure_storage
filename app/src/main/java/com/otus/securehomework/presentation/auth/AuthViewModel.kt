@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.otus.securehomework.data.Response
-import com.otus.securehomework.data.dto.LoginData
 import com.otus.securehomework.data.dto.LoginResponse
 import com.otus.securehomework.data.repository.AuthRepository
 import com.otus.securehomework.data.repository.UserRepository
@@ -14,7 +13,6 @@ import com.otus.securehomework.data.source.crypto.BiometricAuthManager
 import com.otus.securehomework.data.source.local.SecureUserPreferences
 import com.otus.securehomework.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -52,7 +50,11 @@ class AuthViewModel
 
     fun startBiometrics(host: AuthPromptHost) {
         viewModelScope.launch {
-            _biometricsInput.value = biometricAuthManager.checkBiometricAuth(host)
+            try {
+                _biometricsInput.value = biometricAuthManager.checkBiometricAuth(host)
+            } catch (e: Exception) {
+                _biometricsInput.value = false
+            }
         }
     }
 }
