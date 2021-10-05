@@ -18,4 +18,5 @@
     <string name="disable_biometric_auth">Disable biometric login</string>
     <string name="fingerprint_subtitle">Login with biometrics</string>
     <string name="fingerprint_description">Scan your fingerprint.</string>
+    <string name="fingerprint_error">Wrong finger, try again later</string>
 </resources>

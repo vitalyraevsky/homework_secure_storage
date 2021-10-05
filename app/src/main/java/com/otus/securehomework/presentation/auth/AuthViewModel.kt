@@ -20,7 +20,6 @@ import javax.inject.Inject
 class AuthViewModel
 @Inject constructor(
     private val repository: AuthRepository,
-    private val userRepository: UserRepository,
     private val userPreferences: SecureUserPreferences,
     private val biometricAuthManager: BiometricAuthManager
 ) : BaseViewModel(repository) {

@@ -46,7 +46,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         })
         viewModel.biometricsInput.observe(viewLifecycleOwner) {
             if (it) requireActivity().startNewActivity(HomeActivity::class.java)
-            else requireView().snackbar("Wrong finger, try again later")
+            else requireView().snackbar(getString(R.string.fingerprint_error))
         }
         viewModel.hasBiometric.observe(viewLifecycleOwner) {
             if (it) viewModel.startBiometrics(AuthPromptHost(this))
