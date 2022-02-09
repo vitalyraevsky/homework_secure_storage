@@ -10,6 +10,8 @@
     <string name="email_hint">john@mail.czom</string>
     <string name="password">password</string>
     <string name="login">Login</string>
+    <string name="login_bio_week">Login BIO Week</string>
+    <string name="login_bio_strong">Login BIO Strong</string>
     <string name="logout">Logout</string>
     <string name="forgot_your_password">Forgot your password?</string>
     <string name="register_now">Register Now</string>
