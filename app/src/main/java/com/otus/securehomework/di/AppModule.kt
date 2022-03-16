@@ -6,6 +6,10 @@ import com.otus.securehomework.data.repository.UserRepository
 import com.otus.securehomework.data.source.local.UserPreferences
 import com.otus.securehomework.data.source.network.AuthApi
 import com.otus.securehomework.data.source.network.UserApi
+import com.otus.securehomework.security.AesEncryptionService
+import com.otus.securehomework.security.AesKeystoreWrapperImpl
+import com.otus.securehomework.security.RsaEncryptionService
+import com.otus.securehomework.security.RsaKeystoreWrapperImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,9 +46,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideUserPreferences(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        encryptionService: AesEncryptionService
     ): UserPreferences {
-        return UserPreferences(context)
+        return UserPreferences(context, encryptionService)
     }
 
     @Provides
@@ -60,5 +65,32 @@ object AppModule {
         userApi: UserApi
     ): UserRepository {
         return UserRepository(userApi)
+    }
+
+    @Provides
+    fun provideAesEncryptionService(
+        ksWrapper: AesKeystoreWrapperImpl
+    ): AesEncryptionService {
+        return AesEncryptionService(ksWrapper)
+    }
+
+    @Provides
+    fun provideAesKeystoreWrapper(
+        @ApplicationContext context: Context,
+        rsaEncryptionService: RsaEncryptionService
+    ): AesKeystoreWrapperImpl {
+        return AesKeystoreWrapperImpl(context, rsaEncryptionService)
+    }
+
+    @Provides
+    fun provideRsaEncryptionService(
+        ksWrapper: RsaKeystoreWrapperImpl
+    ): RsaEncryptionService {
+        return RsaEncryptionService(ksWrapper)
+    }
+
+    @Provides
+    fun provideRsaKeystoreWrapper(): RsaKeystoreWrapperImpl {
+        return RsaKeystoreWrapperImpl()
     }
 }
