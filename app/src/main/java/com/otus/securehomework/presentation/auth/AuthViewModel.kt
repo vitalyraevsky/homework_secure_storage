@@ -7,6 +7,7 @@ import com.otus.securehomework.data.Response
 import com.otus.securehomework.data.dto.LoginResponse
 import com.otus.securehomework.data.repository.AuthRepository
 import com.otus.securehomework.presentation.BaseViewModel
+import com.otus.securehomework.security.AesKeystoreWrapperImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
