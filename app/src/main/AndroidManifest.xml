@@ -23,8 +23,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.home.HomeActivity" />
-        <activity android:name=".presentation.auth.AuthActivity" />
+        <activity android:name=".presentation.home.HomeActivity"  />
+        <activity android:name=".presentation.auth.AuthActivity" android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

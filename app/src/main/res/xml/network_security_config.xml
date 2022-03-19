@@ -7,10 +7,13 @@
             <certificates src="system" />
         </trust-anchors>
     </base-config>
-    <domain-config>
-        <domain includeSubdomains="true">auth.tragltech.com</domain>
-        <pin-set>
-            <pin digest="SHA-256">dvAWD7qJt9UGvNfgA2v2ipbmKOLaGjkHaFI3n/lnao4=</pin>
-        </pin-set>
+    <!--
+TODO: Обновить PIN
+<domain-config>
+<domain includeSubdomains="true">auth.tragltech.com</domain>
+<pin-set>
+    <pin digest="SHA-256">dvAWD7qJt9UGvNfgA2v2ipbmKOLaGjkHaFI3n/lnao4=</pin>
+</pin-set>
     </domain-config>
+    -->
 </network-security-config>

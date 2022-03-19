@@ -2,6 +2,7 @@
     <string name="app_name">Secure HomeWork</string>
 
     <string name="retry">Retry</string>
+    <string name="error_biometric">Try again later</string>
     <string name="error_internet">Please check your internet connection</string>
     <string name="error_enter">You have entered incorrect email or password</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -10,6 +11,7 @@
     <string name="email_hint">john@mail.czom</string>
     <string name="password">password</string>
     <string name="login">Login</string>
+    <string name="biometry">Biometry</string>
     <string name="logout">Logout</string>
     <string name="forgot_your_password">Forgot your password?</string>
     <string name="register_now">Register Now</string>

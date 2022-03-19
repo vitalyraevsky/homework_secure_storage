@@ -2,6 +2,9 @@ package com.otus.securehomework.presentation.auth
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.biometric.auth.AuthPromptHost
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -46,13 +49,30 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 is Response.Failure -> handleApiError(it) { login() }
             }
         })
+
+        viewModel.navigateHome.observe(viewLifecycleOwner) { success ->
+            if(success) {
+                requireActivity().startNewActivity(HomeActivity::class.java)
+            }
+            else {
+                Toast.makeText(requireContext(), R.string.error_biometric, Toast.LENGTH_SHORT).show()
+            }
+        }
+
         binding.editTextTextPassword.addTextChangedListener {
             val email = binding.editTextTextEmailAddress.text.toString().trim()
             binding.buttonLogin.enable(email.isNotEmpty() && it.toString().isNotEmpty())
         }
+
         binding.buttonLogin.setOnClickListener {
             login()
         }
+
+        binding.buttonBiometry.setOnClickListener {
+            viewModel.biometric(AuthPromptHost(this))
+        }
+
+        binding.buttonBiometry.isVisible = viewModel.biometricAvailable
     }
 
     private fun login() {
