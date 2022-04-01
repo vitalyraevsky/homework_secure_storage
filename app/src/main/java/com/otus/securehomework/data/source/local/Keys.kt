@@ -85,13 +85,9 @@ class Keys @Inject constructor(
 
     private fun generateAndSaveAesSecretKeyLessThanM(): SecretKey {
         val key = ByteArray(16)
-        SecureRandom().run {
-            nextBytes(key)
-        }
+        SecureRandom().run { nextBytes(key) }
         val encryptedKeyBase64encoded = Base64.encodeToString(rsaEncryptKey(key), Base64.DEFAULT)
-        sharedPreferences.edit {
-            putString(ENCRYPTED_KEY_NAME, encryptedKeyBase64encoded)
-        }
+        sharedPreferences.edit { putString(ENCRYPTED_KEY_NAME, encryptedKeyBase64encoded) }
         return SecretKeySpec(key, "AES")
     }
 
@@ -143,8 +139,8 @@ class Keys @Inject constructor(
                 .setAlias(RSA_KEY_ALIAS)
                 .setSubject(X500Principal("CN=$RSA_KEY_ALIAS"))
                 .setSerialNumber(BigInteger.TEN)
-                .setStartDate(start.getTime())
-                .setEndDate(end.getTime())
+                .setStartDate(start.time)
+                .setEndDate(end.time)
                 .build()
         }
         return KeyPairGenerator.getInstance(RSA_ALGORITHM, KEY_PROVIDER).run {
