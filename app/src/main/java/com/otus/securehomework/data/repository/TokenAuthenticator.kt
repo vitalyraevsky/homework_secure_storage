@@ -14,16 +14,16 @@ import com.otus.securehomework.data.Response as DataResponse
 
 class TokenAuthenticator @Inject constructor(
     private val tokenApi: TokenRefreshApi,
-    private val preferences: UserPreferences
+    private val authRepository: AuthRepository
 ) : Authenticator, BaseRepository(tokenApi) {
 
     override fun authenticate(route: Route?, response: Response): Request? {
         return runBlocking {
             when (val tokenResponse = getUpdatedToken()) {
                 is DataResponse.Success -> {
-                    preferences.saveAccessTokens(
-                        tokenResponse.value.access_token,
-                        tokenResponse.value.refresh_token
+                    authRepository.encryptAndSaveAccessTokens(
+                        tokenResponse.value.access_token!!,
+                        tokenResponse.value.refresh_token!!
                     )
                     response.request.newBuilder()
                         .header("Authorization", "Bearer ${tokenResponse.value.access_token}")
@@ -35,7 +35,7 @@ class TokenAuthenticator @Inject constructor(
     }
 
     private suspend fun getUpdatedToken(): DataResponse<TokenResponse> {
-        val refreshToken = preferences.refreshToken.first()
+        val refreshToken = authRepository.getDecryptedRefreshToken()
         return safeApiCall {
             tokenApi.refreshAccessToken(refreshToken)
         }
