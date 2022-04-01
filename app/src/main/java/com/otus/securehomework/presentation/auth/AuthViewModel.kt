@@ -30,6 +30,6 @@ class AuthViewModel
     }
 
     suspend fun saveAccessTokens(accessToken: String, refreshToken: String) {
-        repository.encryptAndSaveAccessTokens(accessToken, refreshToken)
+        repository.saveAccessTokens(accessToken, refreshToken)
     }
 }

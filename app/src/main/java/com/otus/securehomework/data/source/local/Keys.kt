@@ -8,6 +8,7 @@ import android.security.keystore.KeyProperties
 import android.util.Base64
 import androidx.annotation.RequiresApi
 import androidx.core.content.edit
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.math.BigInteger
 import java.security.KeyPair
 import java.security.KeyPairGenerator
@@ -36,7 +37,7 @@ private const val AES_ALGORITHM = "AES"
 private const val AES_KEY_ALIAS = "AES_DEMO"
 
 class Keys @Inject constructor(
-    private val applicationContext: Context
+    @ApplicationContext private val applicationContext: Context
 ) {
 
     private val sharedPreferences by lazy {
