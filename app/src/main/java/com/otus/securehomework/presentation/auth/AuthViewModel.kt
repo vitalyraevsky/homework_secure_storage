@@ -18,6 +18,7 @@ class AuthViewModel
 ) : BaseViewModel(repository) {
 
     private val _loginResponse: MutableLiveData<Response<LoginResponse>> = MutableLiveData()
+
     val loginResponse: LiveData<Response<LoginResponse>>
         get() = _loginResponse
 
@@ -29,7 +30,9 @@ class AuthViewModel
         _loginResponse.value = repository.login(email, password)
     }
 
-    suspend fun saveAccessTokens(accessToken: String, refreshToken: String) {
+    //TODO - преобразовать в charSequence
+    suspend fun saveAccessTokens(accessToken: ByteArray, refreshToken: ByteArray) {
+
         repository.saveAccessTokens(accessToken, refreshToken)
     }
 }

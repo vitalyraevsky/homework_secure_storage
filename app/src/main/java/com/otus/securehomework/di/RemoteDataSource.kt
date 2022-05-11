@@ -4,11 +4,11 @@ import com.otus.securehomework.BuildConfig
 import com.otus.securehomework.data.repository.TokenAuthenticator
 import com.otus.securehomework.data.source.local.UserPreferences
 import com.otus.securehomework.data.source.network.TokenRefreshApi
-import okhttp3.Authenticator
-import okhttp3.OkHttpClient
+import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
 import javax.inject.Inject
 
 private const val BASE_URL = "https://auth.tragltech.com/otus/api/"
@@ -39,7 +39,17 @@ class RemoteDataSource @Inject constructor(
     }
 
     private fun getRetrofitClient(authenticator: Authenticator? = null): OkHttpClient {
+
+        val spec =  ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+
+        .allEnabledTlsVersions()
+            .allEnabledCipherSuites()
+            .build();
+
         return OkHttpClient.Builder()
+            .connectionSpecs(Collections.singletonList(spec))
+
+
             .addInterceptor { chain ->
                 chain.proceed(chain.request().newBuilder().also {
                     it.addHeader("Accept", "application/json")

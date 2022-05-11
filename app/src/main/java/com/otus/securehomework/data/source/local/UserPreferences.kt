@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.otus.securehomework.crypto.Keys
+import com.otus.securehomework.crypto.Security
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -15,32 +18,36 @@ class UserPreferences
     private val context: Context
 ) {
 
-    val accessToken: Flow<String?>
+    private var keys = Keys(context)
+    private var secure = Security(keys)
+
+    val accessToken: Flow<ByteArray?>
         get() = context.dataStore.data.map { preferences ->
-            preferences[ACCESS_TOKEN]
+            secure.decrypt(preferences[ACCESS_TOKEN])
         }
 
-    val refreshToken: Flow<String?>
+    val refreshToken: Flow<ByteArray?>
         get() = context.dataStore.data.map { preferences ->
-            preferences[REFRESH_TOKEN]
+            secure.decrypt(preferences[REFRESH_TOKEN])
         }
 
-    suspend fun saveAccessTokens(accessToken: String?, refreshToken: String?) {
+    suspend fun saveAccessTokens(accessToken: ByteArray?, refreshToken: ByteArray?) {
         context.dataStore.edit { preferences ->
-            accessToken?.let { preferences[ACCESS_TOKEN] = it }
-            refreshToken?.let { preferences[REFRESH_TOKEN] = it }
+            accessToken?.let { preferences[ACCESS_TOKEN] = secure.encrypt(it) }
+            refreshToken?.let { preferences[REFRESH_TOKEN] = secure.encrypt(it) }
         }
     }
 
     suspend fun clear() {
         context.dataStore.edit { preferences ->
             preferences.clear()
+            secure.removeKeys()
         }
     }
 
     companion object {
         private val Context.dataStore by preferencesDataStore(name = dataStoreFile)
-        private val ACCESS_TOKEN = stringPreferencesKey("key_access_token")
-        private val REFRESH_TOKEN = stringPreferencesKey("key_refresh_token")
+        private val ACCESS_TOKEN = stringPreferencesKey("key_access_tokenn")
+        private val REFRESH_TOKEN = stringPreferencesKey("key_refresh_tokenn")
     }
 }

@@ -1,7 +1,16 @@
 package com.otus.securehomework.presentation.auth
 
+
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import androidx.annotation.RequiresApi
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
+import androidx.biometric.BiometricPrompt
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,6 +26,9 @@ import com.otus.securehomework.presentation.enable
 import com.otus.securehomework.presentation.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import    android.provider.Settings
+import androidx.core.content.ContextCompat
+import java.util.concurrent.Executor
 
 @AndroidEntryPoint
 class LoginFragment : Fragment(R.layout.fragment_login) {
@@ -24,12 +36,14 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private lateinit var binding: FragmentLoginBinding
     private val viewModel by viewModels<AuthViewModel>()
 
+
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding = FragmentLoginBinding.bind(view)
 
         binding.progressbar.visible(false)
-        binding.buttonLogin.enable(false)
+        binding.buttonLogin.enable(true)
 
         viewModel.loginResponse.observe(viewLifecycleOwner, Observer {
             binding.progressbar.visible(it is Response.Loading)
@@ -37,8 +51,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 is Response.Success -> {
                     lifecycleScope.launch {
                         viewModel.saveAccessTokens(
-                            it.value.user.access_token!!,
-                            it.value.user.refresh_token!!
+                            it.value.user.access_token!!.toByteArray(Charsets.UTF_8),
+                            it.value.user.refresh_token!!.toByteArray(Charsets.UTF_8)
                         )
                         requireActivity().startNewActivity(HomeActivity::class.java)
                     }
@@ -46,6 +60,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 is Response.Failure -> handleApiError(it) { login() }
             }
         })
+
+
+
         binding.editTextTextPassword.addTextChangedListener {
             val email = binding.editTextTextEmailAddress.text.toString().trim()
             binding.buttonLogin.enable(email.isNotEmpty() && it.toString().isNotEmpty())
@@ -53,11 +70,19 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         binding.buttonLogin.setOnClickListener {
             login()
         }
+
     }
 
     private fun login() {
         val email = binding.editTextTextEmailAddress.text.toString().trim()
         val password = binding.editTextTextPassword.text.toString().trim()
         viewModel.login(email, password)
+    }
+
+
+
+
+    companion object {
+        val BIOMETRIC_REQUEST_CODE = 200
     }
 }

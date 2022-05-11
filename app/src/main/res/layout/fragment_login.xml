@@ -38,6 +38,7 @@
         android:layout_marginStart="32dp"
         android:ems="10"
         android:hint="@string/email_hint"
+        android:text="otus@test.com"
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -65,6 +66,7 @@
         android:layout_marginRight="32dp"
         android:layout_marginStart="32dp"
         android:ems="10"
+        android:text="otus"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -84,6 +86,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewForgotPassword"
         style="@style/ButtonPrimary" />
+
+
 
     <TextView
         android:id="@+id/textViewForgotPassword"

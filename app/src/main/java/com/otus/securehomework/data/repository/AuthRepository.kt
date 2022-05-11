@@ -1,5 +1,7 @@
 package com.otus.securehomework.data.repository
 
+import com.otus.securehomework.crypto.Keys
+import com.otus.securehomework.crypto.Security
 import com.otus.securehomework.data.Response
 import com.otus.securehomework.data.dto.LoginResponse
 import com.otus.securehomework.data.source.local.UserPreferences
@@ -9,7 +11,8 @@ import javax.inject.Inject
 class AuthRepository
 @Inject constructor(
     private val api: AuthApi,
-    private val preferences: UserPreferences
+    private val preferences: UserPreferences,
+
 ) : BaseRepository(api) {
 
     suspend fun login(
@@ -19,7 +22,7 @@ class AuthRepository
         return safeApiCall { api.login(email, password) }
     }
 
-    suspend fun saveAccessTokens(accessToken: String, refreshToken: String) {
+    suspend fun saveAccessTokens(accessToken: ByteArray, refreshToken: ByteArray) {
         preferences.saveAccessTokens(accessToken, refreshToken)
     }
 }

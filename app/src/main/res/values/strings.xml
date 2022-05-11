@@ -14,4 +14,9 @@
     <string name="forgot_your_password">Forgot your password?</string>
     <string name="register_now">Register Now</string>
     <string name="already_have_an_account_login_now">Already have an account? <b>Login Now</b></string>
+
+    <string name="bio_title">Biometric login for otus app</string>
+    <string name="bio_subtitle">Log in using your biometric credential</string>
+    <string name="bio_negative_button_text">Use account password</string>
+
 </resources>
