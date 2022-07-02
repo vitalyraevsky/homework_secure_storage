@@ -17,6 +17,7 @@
         android:theme="@style/Theme.SecureHomeWork">
 
         <activity
+            android:exported="true"
             android:name=".presentation.splash.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

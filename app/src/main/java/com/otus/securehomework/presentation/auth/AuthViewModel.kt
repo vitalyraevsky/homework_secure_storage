@@ -30,9 +30,7 @@ class AuthViewModel
         _loginResponse.value = repository.login(email, password)
     }
 
-    //TODO - преобразовать в charSequence
-    suspend fun saveAccessTokens(accessToken: ByteArray, refreshToken: ByteArray) {
-
+    suspend fun saveAccessTokens(accessToken: CharSequence, refreshToken: CharSequence) {
         repository.saveAccessTokens(accessToken, refreshToken)
     }
 }

@@ -21,17 +21,17 @@ class UserPreferences
     private var keys = Keys(context)
     private var secure = Security(keys)
 
-    val accessToken: Flow<ByteArray?>
+    val accessToken: Flow<CharSequence?>
         get() = context.dataStore.data.map { preferences ->
             secure.decrypt(preferences[ACCESS_TOKEN])
         }
 
-    val refreshToken: Flow<ByteArray?>
+    val refreshToken: Flow<CharSequence?>
         get() = context.dataStore.data.map { preferences ->
             secure.decrypt(preferences[REFRESH_TOKEN])
         }
 
-    suspend fun saveAccessTokens(accessToken: ByteArray?, refreshToken: ByteArray?) {
+    suspend fun saveAccessTokens(accessToken: CharSequence?, refreshToken: CharSequence?) {
         context.dataStore.edit { preferences ->
             accessToken?.let { preferences[ACCESS_TOKEN] = secure.encrypt(it) }
             refreshToken?.let { preferences[REFRESH_TOKEN] = secure.encrypt(it) }

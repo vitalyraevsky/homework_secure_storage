@@ -22,8 +22,8 @@ class TokenAuthenticator @Inject constructor(
             when (val tokenResponse = getUpdatedToken()) {
                 is DataResponse.Success -> {
                     preferences.saveAccessTokens(
-                        tokenResponse.value.access_token?.toByteArray(Charsets.UTF_8),
-                        tokenResponse.value.refresh_token?.toByteArray(Charsets.UTF_8)
+                        tokenResponse.value.access_token,
+                        tokenResponse.value.refresh_token
                     )
                     response.request.newBuilder()
                         .header("Authorization", "Bearer ${tokenResponse.value.access_token}")
@@ -38,7 +38,7 @@ class TokenAuthenticator @Inject constructor(
         val refreshToken = preferences.refreshToken.first()
         return safeApiCall {
 
-            tokenApi.refreshAccessToken(String(refreshToken ?: byteArrayOf()))
+            tokenApi.refreshAccessToken(refreshToken = refreshToken.toString())
         }
     }
 }

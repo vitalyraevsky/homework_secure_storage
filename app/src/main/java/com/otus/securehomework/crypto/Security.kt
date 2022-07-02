@@ -2,6 +2,7 @@ package com.otus.securehomework.crypto
 
 import android.content.Context
 import android.util.Base64
+import android.util.Log
 import java.math.BigInteger
 import java.security.Key
 import java.security.MessageDigest
@@ -57,32 +58,38 @@ class Security @Inject constructor(
         return hash.toString()
     }
 
-    fun encryptAes(plainText: ByteArray, key: Key): String {
+    fun encryptAes(plainText: CharSequence, key: Key): String {
         val cipher = Cipher.getInstance(AES_TRANSFORMATION)
+
         cipher.init(Cipher.ENCRYPT_MODE, key)
-        val encodedBytes = cipher.doFinal(plainText)
+        val x = plainText.map { it.code.toByte() }
+        val encodedBytes = cipher.doFinal(x.toByteArray())
         return Base64.encodeToString(encodedBytes, Base64.NO_WRAP)
     }
+
 
     private fun getInitializationVector(): AlgorithmParameterSpec {
         return GCMParameterSpec(128, FIXED_IV)
     }
 
-    fun decryptAes(encrypted: String, key: Key): ByteArray {
+    fun decryptAes(encrypted: String, key: Key): CharSequence {
         val cipher = Cipher.getInstance(AES_TRANSFORMATION)
         cipher.init(Cipher.DECRYPT_MODE, key)
         val decodedBytes = Base64.decode(encrypted, Base64.NO_WRAP)
         val decoded = cipher.doFinal(decodedBytes)
-        return  decoded
+        val cs=java.nio.CharBuffer.wrap(decoded.map{it.toInt().toChar()}.toCharArray())
+        Log.d("TAG",cs.toString())
+        return cs
     }
 
-    fun decrypt(encrypted: String?): ByteArray? {
+
+    fun decrypt(encrypted: String?): CharSequence? {
         return encrypted?.let {
             decryptAes(encrypted, keys.getAesSecretKey())
         }
     }
 
-    fun encrypt(descripted: ByteArray): String {
+    fun encrypt(descripted: CharSequence): String {
         return encryptAes(descripted, keys.getAesSecretKey())
     }
 
