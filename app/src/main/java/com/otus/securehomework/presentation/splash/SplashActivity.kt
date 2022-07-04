@@ -24,21 +24,21 @@ class SplashActivity : AppCompatActivity() {
     private lateinit var executor: Executor
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
+    private lateinit var userPreferences: UserPreferences
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-        val userPreferences = UserPreferences(this)
-
+        userPreferences = UserPreferences(this)
 
         userPreferences.accessToken.asLiveData().observe(this, Observer {
             if (it == null) {
                 gotoLogin()
             } else {
-                
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    verifyByBiometry()
+                    checkIfBiometryEnabled()
                 } else {
                     gotoHome()
                 }
@@ -50,6 +50,17 @@ class SplashActivity : AppCompatActivity() {
     fun verifyByBiometry() {
         initBiometricAuth()
         loginWithBiometry()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    fun checkIfBiometryEnabled() {
+        userPreferences.enableBiometric.asLiveData().observe(this, { enabled ->
+            if (enabled) {
+                verifyByBiometry()
+            } else {
+                gotoHome()
+            }
+        })
     }
 
     fun gotoLogin() {

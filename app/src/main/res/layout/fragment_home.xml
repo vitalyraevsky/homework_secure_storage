@@ -55,11 +55,21 @@
 
     </TableLayout>
 
+    <androidx.appcompat.widget.SwitchCompat
+        android:layout_below="@id/table"
+        android:layout_centerHorizontal="true"
+
+        android:id="@+id/enableBiometric"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Включить биометрию"
+         />
+
     <Button
         android:id="@+id/button_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/table"
+        android:layout_below="@id/enableBiometric"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
         android:text="@string/logout"

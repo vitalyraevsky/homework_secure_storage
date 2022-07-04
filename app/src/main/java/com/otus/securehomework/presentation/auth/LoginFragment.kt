@@ -1,16 +1,9 @@
 package com.otus.securehomework.presentation.auth
 
-
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.annotation.RequiresApi
-import androidx.biometric.BiometricManager
-import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
-import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
-import androidx.biometric.BiometricPrompt
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -26,9 +19,6 @@ import com.otus.securehomework.presentation.enable
 import com.otus.securehomework.presentation.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import    android.provider.Settings
-import androidx.core.content.ContextCompat
-import java.util.concurrent.Executor
 
 @AndroidEntryPoint
 class LoginFragment : Fragment(R.layout.fragment_login) {
@@ -79,10 +69,4 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         viewModel.login(email, password)
     }
 
-
-
-
-    companion object {
-        val BIOMETRIC_REQUEST_CODE = 200
-    }
 }
