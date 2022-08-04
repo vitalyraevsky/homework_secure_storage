@@ -1,15 +1,19 @@
 package com.otus.securehomework.data.repository
 
+import android.util.Log
 import com.otus.securehomework.data.Response
 import com.otus.securehomework.data.dto.LoginResponse
 import com.otus.securehomework.data.source.local.UserPreferences
 import com.otus.securehomework.data.source.network.AuthApi
+import com.otus.securehomework.data.source.secure.PreferenceManager
+import com.otus.securehomework.data.source.secure.Security
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class AuthRepository
 @Inject constructor(
     private val api: AuthApi,
-    private val preferences: UserPreferences
+    private val preferenceManager: PreferenceManager
 ) : BaseRepository(api) {
 
     suspend fun login(
@@ -20,6 +24,8 @@ class AuthRepository
     }
 
     suspend fun saveAccessTokens(accessToken: String, refreshToken: String) {
-        preferences.saveAccessTokens(accessToken, refreshToken)
+        preferenceManager.saveAccessTokens(accessToken, refreshToken)
     }
+
+    suspend fun getDecryptedAccessToken(): String? = preferenceManager.getDecryptedAccessToken()
 }

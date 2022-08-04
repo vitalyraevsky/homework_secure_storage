@@ -2,10 +2,16 @@ package com.otus.securehomework.di
 
 import android.content.Context
 import com.otus.securehomework.data.repository.AuthRepository
+import com.otus.securehomework.data.repository.TokenAuthenticator
 import com.otus.securehomework.data.repository.UserRepository
 import com.otus.securehomework.data.source.local.UserPreferences
 import com.otus.securehomework.data.source.network.AuthApi
+import com.otus.securehomework.data.source.network.TokenRefreshApi
 import com.otus.securehomework.data.source.network.UserApi
+import com.otus.securehomework.data.source.secure.PersistentStoreManager
+import com.otus.securehomework.data.source.secure.PreferenceManager
+import com.otus.securehomework.data.source.secure.PreferenceManagerImpl
+import com.otus.securehomework.data.source.secure.Security
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,9 +26,9 @@ object AppModule {
     @Singleton
     @Provides
     fun provideRemoteDataSource(
-        userPreferences: UserPreferences
+        preferenceManager: PreferenceManager
     ): RemoteDataSource {
-        return RemoteDataSource(userPreferences)
+        return RemoteDataSource(preferenceManager)
     }
 
     @Provides
@@ -50,9 +56,17 @@ object AppModule {
     @Provides
     fun provideAuthRepository(
         authApi: AuthApi,
-        userPreferences: UserPreferences
+        preferenceManager: PreferenceManager
     ): AuthRepository {
-        return AuthRepository(authApi, userPreferences)
+        return AuthRepository(authApi, preferenceManager)
+    }
+
+    @Provides
+    fun providePreferenceManager(
+        userPreferences: UserPreferences,
+        security: Security
+    ): PreferenceManager {
+        return PreferenceManagerImpl(userPreferences, security)
     }
 
     @Provides
@@ -61,4 +75,16 @@ object AppModule {
     ): UserRepository {
         return UserRepository(userApi)
     }
+
+    @Singleton
+    @Provides
+    fun provideStoreManager(
+        @ApplicationContext context: Context
+    ): PersistentStoreManager = PersistentStoreManager(context)
+
+    @Singleton
+    @Provides
+    fun provideSecurity(
+        manager: PersistentStoreManager
+    ): Security = Security(manager)
 }
