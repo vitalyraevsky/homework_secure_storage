@@ -2,6 +2,7 @@ package com.otus.securehomework.di
 
 import com.otus.securehomework.BuildConfig
 import com.otus.securehomework.data.repository.TokenAuthenticator
+import com.otus.securehomework.data.repository.crypto.SecureUserPreferences
 import com.otus.securehomework.data.source.local.UserPreferences
 import com.otus.securehomework.data.source.network.TokenRefreshApi
 import okhttp3.Authenticator
@@ -9,12 +10,16 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.security.SecureRandom
+import java.security.cert.CertificateException
+import java.security.cert.X509Certificate
 import javax.inject.Inject
+import javax.net.ssl.*
 
 private const val BASE_URL = "https://auth.tragltech.com/otus/api/"
 
 class RemoteDataSource @Inject constructor(
-    private val preferences: UserPreferences
+    private val preferences: SecureUserPreferences
 ) {
 
     fun <Api> buildApi(

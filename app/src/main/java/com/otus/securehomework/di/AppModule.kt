@@ -1,8 +1,13 @@
 package com.otus.securehomework.di
 
 import android.content.Context
+import android.os.Build
 import com.otus.securehomework.data.repository.AuthRepository
 import com.otus.securehomework.data.repository.UserRepository
+import com.otus.securehomework.data.repository.crypto.IKeyProvider
+import com.otus.securehomework.data.repository.crypto.Keys
+import com.otus.securehomework.data.repository.crypto.LegacyKeys
+import com.otus.securehomework.data.repository.crypto.SecureUserPreferences
 import com.otus.securehomework.data.source.local.UserPreferences
 import com.otus.securehomework.data.source.network.AuthApi
 import com.otus.securehomework.data.source.network.UserApi
@@ -20,7 +25,7 @@ object AppModule {
     @Singleton
     @Provides
     fun provideRemoteDataSource(
-        userPreferences: UserPreferences
+        userPreferences: SecureUserPreferences
     ): RemoteDataSource {
         return RemoteDataSource(userPreferences)
     }
@@ -50,7 +55,7 @@ object AppModule {
     @Provides
     fun provideAuthRepository(
         authApi: AuthApi,
-        userPreferences: UserPreferences
+        userPreferences: SecureUserPreferences
     ): AuthRepository {
         return AuthRepository(authApi, userPreferences)
     }
@@ -61,4 +66,17 @@ object AppModule {
     ): UserRepository {
         return UserRepository(userApi)
     }
+
+    @Singleton
+    @Provides
+    fun provideKeys(
+        @ApplicationContext applicationContext: Context
+    ): IKeyProvider {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Keys()
+        } else {
+            LegacyKeys(applicationContext)
+        }
+    }
+
 }
