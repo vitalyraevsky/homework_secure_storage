@@ -55,35 +55,6 @@ class RemoteDataSource @Inject constructor(
                     val logging = HttpLoggingInterceptor()
                     logging.setLevel(HttpLoggingInterceptor.Level.BODY)
                     client.addInterceptor(logging)
-
-
-//                    val trustManager = object : X509TrustManager {
-//                        @Throws(CertificateException::class)
-//                        override fun checkClientTrusted(
-//                            chain: Array<X509Certificate?>?,
-//                            authType: String?
-//                        ) = Unit
-//
-//                        @Throws(CertificateException::class)
-//                        override fun checkServerTrusted(
-//                            chain: Array<X509Certificate?>?,
-//                            authType: String?
-//                        ) = Unit
-//
-//                        override fun getAcceptedIssuers(): Array<X509Certificate> {
-//                            return arrayOf()
-//                        }
-//
-//                    }
-//                    val trustAllCerts: Array<TrustManager> = arrayOf(trustManager)
-//
-//                    val sslContext = SSLContext.getInstance("SSL")
-//                    sslContext.init(null, trustAllCerts, SecureRandom())
-//                    val sslSocketFactory = sslContext.socketFactory
-//
-//                    client.sslSocketFactory(sslSocketFactory, trustManager)
-//
-//                    client.hostnameVerifier { hostname, session -> true }
                 }
             }.build()
     }
