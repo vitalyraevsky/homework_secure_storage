@@ -1,10 +1,13 @@
 package com.otus.securehomework.presentation.splash
 
+
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.asLiveData
 import com.otus.securehomework.R
+import com.otus.securehomework.data.crypto.Keys
+import com.otus.securehomework.data.crypto.Security
 import com.otus.securehomework.data.source.local.UserPreferences
 import com.otus.securehomework.presentation.auth.AuthActivity
 import com.otus.securehomework.presentation.home.HomeActivity
@@ -17,8 +20,12 @@ class SplashActivity  : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-        val userPreferences = UserPreferences(this)
 
+        val userPreferences = UserPreferences(
+            applicationContext,
+            Security(),
+            Keys(applicationContext)
+        )
         userPreferences.accessToken.asLiveData().observe(this, Observer {
             val activity = if (it == null) {
                 AuthActivity::class.java

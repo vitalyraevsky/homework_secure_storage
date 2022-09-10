@@ -1,6 +1,8 @@
 package com.otus.securehomework.di
 
 import android.content.Context
+import com.otus.securehomework.data.crypto.Keys
+import com.otus.securehomework.data.crypto.Security
 import com.otus.securehomework.data.repository.AuthRepository
 import com.otus.securehomework.data.repository.UserRepository
 import com.otus.securehomework.data.source.local.UserPreferences
@@ -42,9 +44,11 @@ object AppModule {
     @Singleton
     @Provides
     fun provideUserPreferences(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        security: Security,
+        keys: Keys
     ): UserPreferences {
-        return UserPreferences(context)
+        return UserPreferences(context, security, keys)
     }
 
     @Provides
