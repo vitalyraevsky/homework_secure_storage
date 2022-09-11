@@ -37,8 +37,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 is Response.Success -> {
                     lifecycleScope.launch {
                         viewModel.saveAccessTokens(
-                            it.value.user.access_token!!,
-                            it.value.user.refresh_token!!
+                            it.value.user.access_token,
+                            it.value.user.refresh_token
                         )
                         requireActivity().startNewActivity(HomeActivity::class.java)
                     }
