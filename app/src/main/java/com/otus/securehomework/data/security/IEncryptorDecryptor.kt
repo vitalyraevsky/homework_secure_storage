@@ -4,7 +4,7 @@ import java.security.Key
 
 interface IEncryptorDecryptor {
 
-    fun encryptAes(plainText: String, key: Key): String
+    fun encryptAes(plainText: CharSequence, key: Key): String
 
-    fun decryptAes(encrypted: String, key: Key): String
+    fun decryptAes(encrypted: CharSequence, key: Key): CharSequence
 }

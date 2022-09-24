@@ -21,27 +21,25 @@ class UserPreferences @Inject constructor(
     private val encryptorDecryptor: IEncryptorDecryptor
 ) {
 
-    val accessToken: Flow<String?>
+    val accessToken: Flow<CharSequence?>
         get() = context.dataStore.data.map { preferences ->
             val encryptAccessToken = preferences[ACCESS_TOKEN] ?: return@map null
             val key = keyGenerator.getSecretKey()
             encryptorDecryptor.decryptAes(encryptAccessToken, key)
         }
 
-    val refreshToken: Flow<String?>
+    val refreshToken: Flow<CharSequence?>
         get() = context.dataStore.data.map { preferences ->
             val encryptRefreshToken = preferences[REFRESH_TOKEN] ?: return@map null
             val key = keyGenerator.getSecretKey()
             encryptorDecryptor.decryptAes(encryptRefreshToken, key)
         }
 
-    suspend fun saveAccessTokens(accessToken: String?, refreshToken: String?) {
+    suspend fun saveAccessTokens(accessToken: CharSequence, refreshToken: CharSequence) {
         context.dataStore.edit { preferences ->
             val key = keyGenerator.getSecretKey()
-            accessToken?.let { preferences[ACCESS_TOKEN] = encryptorDecryptor.encryptAes(it, key) }
-            refreshToken?.let {
-                preferences[REFRESH_TOKEN] = encryptorDecryptor.encryptAes(it, key)
-            }
+            preferences[ACCESS_TOKEN] = encryptorDecryptor.encryptAes(accessToken, key)
+            preferences[REFRESH_TOKEN] = encryptorDecryptor.encryptAes(refreshToken, key)
         }
     }
 

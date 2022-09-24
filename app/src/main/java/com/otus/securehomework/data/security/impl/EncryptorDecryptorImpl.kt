@@ -15,16 +15,24 @@ class EncryptorDecryptorImpl @Inject constructor() : IEncryptorDecryptor {
     private val vector = IvParameterSpec(iv)
     private val cipher = Cipher.getInstance(AES_TRANSFORMATION)
 
-    override fun encryptAes(plainText: String, key: Key): String {
+    override fun encryptAes(plainText: CharSequence, key: Key): String {
         cipher.init(Cipher.ENCRYPT_MODE, key, vector)
         val encodedBytes = cipher.doFinal(plainText.toByteArray())
         return Base64.encodeToString(encodedBytes, Base64.NO_WRAP)
     }
 
-    override fun decryptAes(encrypted: String, key: Key): String {
+    override fun decryptAes(encrypted: CharSequence, key: Key): CharSequence {
         cipher.init(Cipher.DECRYPT_MODE, key, vector)
-        val decodedBytes = Base64.decode(encrypted, Base64.NO_WRAP)
+        val decodedBytes = Base64.decode(encrypted.toByteArray(), Base64.NO_WRAP)
         val decoded = cipher.doFinal(decodedBytes)
         return String(decoded, Charsets.UTF_8)
+    }
+
+    private fun CharSequence.toByteArray(): ByteArray {
+        val barr = ByteArray(length)
+        for (i in barr.indices) {
+            barr[i] = this[i].code.toByte()
+        }
+        return barr
     }
 }
