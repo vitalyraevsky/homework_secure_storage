@@ -3,8 +3,9 @@ package com.otus.securehomework.di
 import android.os.Build
 import com.otus.securehomework.data.security.IEncryptorDecryptor
 import com.otus.securehomework.data.security.IKeyGenerator
-import com.otus.securehomework.data.security.impl.EncryptorDecryptorImpl
 import com.otus.securehomework.data.security.impl.AesKeyGeneratorMImpl
+import com.otus.securehomework.data.security.impl.EncryptorDecryptorImpl
+import com.otus.securehomework.data.security.impl.OlderVersionKeyGeneratorImpl
 import com.otus.securehomework.data.source.network.AuthApi
 import com.otus.securehomework.data.source.network.UserApi
 import dagger.Module
@@ -33,11 +34,14 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideIKeyGenerator(): IKeyGenerator =
+    fun provideIKeyGenerator(
+        aesKeyGeneratorMImpl: AesKeyGeneratorMImpl,
+        olderVersionKeyGenerator: OlderVersionKeyGeneratorImpl
+    ): IKeyGenerator =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            AesKeyGeneratorMImpl()
+            aesKeyGeneratorMImpl
         } else {
-            TODO()
+            olderVersionKeyGenerator
         }
 
     @Provides
