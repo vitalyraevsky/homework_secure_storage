@@ -3,6 +3,10 @@ package com.otus.securehomework.di
 import android.os.Build
 import com.otus.securehomework.data.security.IEncryptorDecryptor
 import com.otus.securehomework.data.security.IKeyGenerator
+import com.otus.securehomework.data.security.biometric.BiometricCipher
+import com.otus.securehomework.data.security.biometric.BiometricControllerImpl
+import com.otus.securehomework.data.security.biometric.BiometricControllerStub
+import com.otus.securehomework.data.security.biometric.IBiometricController
 import com.otus.securehomework.data.security.impl.AesKeyGeneratorMImpl
 import com.otus.securehomework.data.security.impl.EncryptorDecryptorImpl
 import com.otus.securehomework.data.security.impl.OlderVersionKeyGeneratorImpl
@@ -48,4 +52,14 @@ object AppModule {
     fun provideIEncryptorDecryptor(
         encryptorDecryptorImpl: EncryptorDecryptorImpl
     ): IEncryptorDecryptor = encryptorDecryptorImpl
+
+    @Provides
+    fun provideBiometricController(
+        biometricCipher: BiometricCipher
+    ): IBiometricController =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            BiometricControllerImpl(biometricCipher = biometricCipher)
+        } else {
+            BiometricControllerStub()
+        }
 }
