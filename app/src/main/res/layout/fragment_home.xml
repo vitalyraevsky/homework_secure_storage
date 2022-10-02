@@ -53,6 +53,19 @@
 
         </TableRow>
 
+        <TableRow>
+
+            <TextView
+                android:layout_gravity="center_vertical"
+                android:text="Biometry"
+                style="@style/TextDefault" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/use_biometry" />
+
+        </TableRow>
+
     </TableLayout>
 
     <Button

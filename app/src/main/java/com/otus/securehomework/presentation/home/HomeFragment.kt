@@ -12,6 +12,7 @@ import com.otus.securehomework.presentation.handleApiError
 import com.otus.securehomework.presentation.logout
 import com.otus.securehomework.presentation.visible
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -23,6 +24,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentHomeBinding.bind(view)
         binding.progressbar.visible(false)
+
+        binding.useBiometry.isChecked = viewModel.useBiometry
+        binding.useBiometry.setOnCheckedChangeListener { buttonView, isChecked -> viewModel.useBiometry = isChecked }
 
         viewModel.getUser()
 
