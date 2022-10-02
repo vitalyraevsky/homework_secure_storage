@@ -4,31 +4,36 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.otus.securehomework.data.crypto.TextCipher
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import javax.inject.Singleton
 
 private const val dataStoreFile: String = "securePref"
 
-class UserPreferences
-@Inject constructor(
-    private val context: Context
+@Singleton
+class UserPreferences @Inject constructor(
+    @ApplicationContext
+    private val context: Context,
+    private val textCipher: TextCipher
 ) {
 
     val accessToken: Flow<String?>
         get() = context.dataStore.data.map { preferences ->
-            preferences[ACCESS_TOKEN]
+            preferences[ACCESS_TOKEN]?.let { textCipher.decryptAes(it) }
         }
 
     val refreshToken: Flow<String?>
         get() = context.dataStore.data.map { preferences ->
-            preferences[REFRESH_TOKEN]
+            preferences[REFRESH_TOKEN]?.let { textCipher.decryptAes(it) }
         }
 
     suspend fun saveAccessTokens(accessToken: String?, refreshToken: String?) {
         context.dataStore.edit { preferences ->
-            accessToken?.let { preferences[ACCESS_TOKEN] = it }
-            refreshToken?.let { preferences[REFRESH_TOKEN] = it }
+            accessToken?.let { preferences[ACCESS_TOKEN] = textCipher.encryptAes(it) }
+            refreshToken?.let { preferences[REFRESH_TOKEN] = textCipher.encryptAes(it) }
         }
     }
 

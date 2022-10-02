@@ -39,14 +39,6 @@ object AppModule {
         return remoteDataSource.buildApi(UserApi::class.java)
     }
 
-    @Singleton
-    @Provides
-    fun provideUserPreferences(
-        @ApplicationContext context: Context
-    ): UserPreferences {
-        return UserPreferences(context)
-    }
-
     @Provides
     fun provideAuthRepository(
         authApi: AuthApi,
