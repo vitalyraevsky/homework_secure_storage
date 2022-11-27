@@ -20,6 +20,11 @@ class UserPreferences
     private val secure: Secure
 ) {
 
+    val userBiometricAuth: Flow<Boolean>
+        get() = context.dataStore.data.map { preferences ->
+            preferences[USE_BIOMETRIC_AUTH]?.toBoolean() ?: false
+        }
+
     val accessToken: Flow<String?>
         get() = context.dataStore.data.map { preferences ->
             val key = keys.getSecretKey()
@@ -39,19 +44,23 @@ class UserPreferences
     suspend fun saveAccessTokens(accessToken: CharSequence?, refreshToken: CharSequence?) {
         context.dataStore.edit { preferences ->
 
-            Log.i("TAG", "saveAccessTokens: ${accessToken.toString()}   ${refreshToken.toString()}")
+            val key = keys.getSecretKey()
 
             accessToken?.let {
-                val key = keys.getSecretKey()
+
                 val encryptedToken = secure.encryptAes(it.toString(), key)
-                Log.i("TAG", "saveAccessTokens: $encryptedToken")
                 preferences[ACCESS_TOKEN] = encryptedToken
             }
             refreshToken?.let {
                 val encryptedToken = secure.encryptAes(it.toString(), keys.getSecretKey())
-                Log.i("TAG", "saveAccessTokens: $encryptedToken")
                 preferences[REFRESH_TOKEN] = encryptedToken
             }
+        }
+    }
+
+    suspend fun saveUserAuthBiometricAuth(isEnable: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[USE_BIOMETRIC_AUTH] = isEnable.toString()
         }
     }
 
@@ -65,5 +74,6 @@ class UserPreferences
         private val Context.dataStore by preferencesDataStore(name = dataStoreFile)
         private val ACCESS_TOKEN = stringPreferencesKey("key_access_token")
         private val REFRESH_TOKEN = stringPreferencesKey("key_refresh_token")
+        private val USE_BIOMETRIC_AUTH = stringPreferencesKey("key_biometric_auth")
     }
 }

@@ -2,6 +2,10 @@ package com.otus.securehomework.di
 
 import android.content.Context
 import android.os.Build
+import com.otus.securehomework.data.biometric.BiometricCipher
+import com.otus.securehomework.data.biometric.BiometricController
+import com.otus.securehomework.data.biometric.BiometricController23APIImpl
+import com.otus.securehomework.data.biometric.BiometricControllerLess23APIImpl
 import com.otus.securehomework.data.crypto.*
 import com.otus.securehomework.data.repository.AuthRepository
 import com.otus.securehomework.data.repository.UserRepository
@@ -61,9 +65,10 @@ object AppModule {
 
     @Provides
     fun provideUserRepository(
-        userApi: UserApi
+        userApi: UserApi,
+        userPreferences: UserPreferences
     ): UserRepository {
-        return UserRepository(userApi)
+        return UserRepository(userApi, userPreferences)
     }
 
     @Provides
@@ -77,6 +82,16 @@ object AppModule {
             RsaKeyGenerator(context)
         }
     }
+
+    @Provides
+    fun provideBiometricController(
+        biometricCipher: BiometricCipher
+    ): BiometricController =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            BiometricController23APIImpl(biometricCipher = biometricCipher)
+        } else {
+            BiometricControllerLess23APIImpl()
+        }
 
     @Provides
     fun provideSecure(): Secure {
