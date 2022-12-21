@@ -5,15 +5,14 @@ import android.view.View
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.otus.securehomework.R
 import com.otus.securehomework.data.Response
+import com.otus.securehomework.databinding.FragmentLoginBinding
+import com.otus.securehomework.presentation.enable
 import com.otus.securehomework.presentation.handleApiError
 import com.otus.securehomework.presentation.home.HomeActivity
 import com.otus.securehomework.presentation.startNewActivity
-import com.otus.securehomework.databinding.FragmentLoginBinding
-import com.otus.securehomework.presentation.enable
 import com.otus.securehomework.presentation.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -25,13 +24,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private val viewModel by viewModels<AuthViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+        super.onViewCreated(view, savedInstanceState)
         binding = FragmentLoginBinding.bind(view)
 
         binding.progressbar.visible(false)
         binding.buttonLogin.enable(false)
 
-        viewModel.loginResponse.observe(viewLifecycleOwner, Observer {
+        viewModel.loginResponse.observe(viewLifecycleOwner) {
             binding.progressbar.visible(it is Response.Loading)
             when (it) {
                 is Response.Success -> {
@@ -44,8 +43,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     }
                 }
                 is Response.Failure -> handleApiError(it) { login() }
+                else -> {}
             }
-        })
+        }
         binding.editTextTextPassword.addTextChangedListener {
             val email = binding.editTextTextEmailAddress.text.toString().trim()
             binding.buttonLogin.enable(email.isNotEmpty() && it.toString().isNotEmpty())
@@ -56,8 +56,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun login() {
-        val email = binding.editTextTextEmailAddress.text.toString().trim()
-        val password = binding.editTextTextPassword.text.toString().trim()
+        val email: CharSequence = binding.editTextTextEmailAddress.text.toString().trim()
+        val password: CharSequence = binding.editTextTextPassword.text.toString().trim()
         viewModel.login(email, password)
     }
 }

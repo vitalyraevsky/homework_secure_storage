@@ -22,14 +22,14 @@ class AuthViewModel
         get() = _loginResponse
 
     fun login(
-        email: String,
-        password: String
+        email: CharSequence,
+        password: CharSequence
     ) = viewModelScope.launch {
         _loginResponse.value = Response.Loading
         _loginResponse.value = repository.login(email, password)
     }
 
-    suspend fun saveAccessTokens(accessToken: String, refreshToken: String) {
+    suspend fun saveAccessTokens(accessToken: CharSequence, refreshToken: CharSequence) {
         repository.saveAccessTokens(accessToken, refreshToken)
     }
 }
