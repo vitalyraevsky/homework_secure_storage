@@ -85,6 +85,17 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewForgotPassword"
         style="@style/ButtonPrimary" />
 
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/checkbox_is_allow_biometry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:text="@string/allow_biometric_for_login"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/buttonLogin"
+        />
+
     <TextView
         android:id="@+id/textViewForgotPassword"
         android:layout_width="wrap_content"

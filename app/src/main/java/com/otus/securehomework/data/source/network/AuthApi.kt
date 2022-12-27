@@ -10,7 +10,7 @@ interface AuthApi : BaseApi {
     @FormUrlEncoded
     @POST("auth/login")
     suspend fun login(
-        @Field("email") email: String,
-        @Field("password") password: String
+        @Field("email") email: CharSequence,
+        @Field("password") password: CharSequence
     ): LoginResponse
 }
