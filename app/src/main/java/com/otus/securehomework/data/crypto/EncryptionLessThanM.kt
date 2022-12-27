@@ -123,7 +123,7 @@ class EncryptionLessThanM @Inject constructor(
         private const val PADDING_PKCS5 = "PKCS5Padding"
 
         private const val KEY_ALGORITHM_RSA = "RSA"
-        private const val BLOCK_MODE_ECB = "ECB" //TODO change
+        private const val BLOCK_MODE_ECB = "ECB"
         private const val PADDING_PKCS1 = "PKCS1Padding"
 
         private const val AES_TRANSFORMATION = "$KEY_ALGORITHM_AES/$BLOCK_MODE_CBC/$PADDING_PKCS5"

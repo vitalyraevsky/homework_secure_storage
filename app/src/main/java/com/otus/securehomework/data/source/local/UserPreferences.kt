@@ -3,6 +3,7 @@ package com.otus.securehomework.data.source.local
 import android.util.Base64
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.otus.securehomework.data.crypto.Encryption
@@ -54,6 +55,17 @@ class UserPreferences
         }
     }
 
+    val isAllowBiometry: Flow<Boolean>
+        get() = dataStore.data.map { preferences ->
+            preferences[IS_ALLOW_BIOMETRY] ?: false
+        }
+
+    suspend fun saveIsAllowBiometry(isAllowBiometry: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[IS_ALLOW_BIOMETRY] = isAllowBiometry
+        }
+    }
+
     private fun String.toByteArrayNoWrap(): ByteArray = Base64.decode(this, Base64.NO_WRAP)
     private fun ByteArray.toStringNoWrap(): String = Base64.encodeToString(this, Base64.NO_WRAP)
 
@@ -68,5 +80,6 @@ class UserPreferences
         private val REFRESH_TOKEN = stringPreferencesKey("key_refresh_token")
         private val ACCESS_TOKEN_IV = stringPreferencesKey("key_access_iv")
         private val REFRESH_TOKEN_IV = stringPreferencesKey("key_refresh_iv")
+        private val IS_ALLOW_BIOMETRY = booleanPreferencesKey("is_allow_biometry")
     }
 }

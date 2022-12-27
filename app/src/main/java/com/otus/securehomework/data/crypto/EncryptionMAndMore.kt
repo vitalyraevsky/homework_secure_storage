@@ -29,15 +29,11 @@ class EncryptionMAndMore @Inject constructor(
         } ?: byteArrayOf()
 
     private fun encryptCipher() = Cipher.getInstance(AES_TRANSFORMATION).apply {
-        init(Cipher.ENCRYPT_MODE, getKey(), IvParameterSpec(randomIv()))
+        init(Cipher.ENCRYPT_MODE, getKey())
     }
 
     private fun decryptCipher(iv: ByteArray) = Cipher.getInstance(AES_TRANSFORMATION).apply {
         init(Cipher.DECRYPT_MODE, getKey(), IvParameterSpec(iv))
-    }
-
-    private fun randomIv() = ByteArray(IV_SIZE).also {
-        SecureRandom().nextBytes(it)
     }
 
     private fun getKey() =
@@ -63,10 +59,7 @@ class EncryptionMAndMore @Inject constructor(
         private const val BLOCK_MODE_CBC = KeyProperties.BLOCK_MODE_CBC
         private const val PADDING_PKCS7 = KeyProperties.ENCRYPTION_PADDING_PKCS7
         private const val AES_TRANSFORMATION = "$KEY_ALGORITHM_AES/$BLOCK_MODE_CBC/$PADDING_PKCS7"
-
-        private const val AES_KEY_ALIAS = "AES_KEY_ALIAS"
-
-        private const val IV_SIZE = 16
+        private const val AES_KEY_ALIAS = "AES_KEY"
     }
 }
 
