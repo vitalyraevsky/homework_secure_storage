@@ -10,6 +10,6 @@ interface TokenRefreshApi : BaseApi {
     @FormUrlEncoded
     @POST("auth/refresh-token")
     suspend fun refreshAccessToken(
-        @Field("refresh_token") refreshToken: String?
+        @Field("refresh_token") refreshToken: CharSequence?
     ): TokenResponse
 }
