@@ -117,4 +117,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/fingerprint_button"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        app:icon="@drawable/baseline_fingerprint_24"
+        app:cornerRadius="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/textViewRegisterNow"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonLogin"
+        android:clickable="true"
+        android:focusable="true" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

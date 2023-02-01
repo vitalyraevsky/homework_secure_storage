@@ -16,6 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
+
     private lateinit var binding: FragmentHomeBinding
     private val viewModel by viewModels<HomeViewModel>()
 
@@ -24,22 +25,33 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding = FragmentHomeBinding.bind(view)
         binding.progressbar.visible(false)
 
+        viewModel.isBiometricEnabled.observe(viewLifecycleOwner) {
+            binding.fingerprintSwitch.isChecked = it
+        }
+
+        binding.fingerprintSwitch.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setBiometricEnabled(isChecked)
+        }
+
         viewModel.getUser()
 
-        viewModel.user.observe(viewLifecycleOwner, {
+        viewModel.user.observe(viewLifecycleOwner) {
             when (it) {
                 is Response.Success -> {
                     binding.progressbar.visible(false)
                     updateUI(it.value.user)
                 }
+
                 is Response.Loading -> {
                     binding.progressbar.visible(true)
                 }
+
                 is Response.Failure -> {
                     handleApiError(it)
                 }
             }
-        })
+        }
+
 
         binding.buttonLogout.setOnClickListener {
             logout()
