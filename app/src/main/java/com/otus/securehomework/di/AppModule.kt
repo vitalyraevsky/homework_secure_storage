@@ -1,6 +1,11 @@
 package com.otus.securehomework.di
 
 import android.content.Context
+import android.os.Build
+import com.otus.securehomework.data.crypto.AfterMSecretKey
+import com.otus.securehomework.data.crypto.BeforeMSecretKey
+import com.otus.securehomework.data.crypto.Crypto
+import com.otus.securehomework.data.crypto.ISecretKey
 import com.otus.securehomework.data.repository.AuthRepository
 import com.otus.securehomework.data.repository.UserRepository
 import com.otus.securehomework.data.source.local.UserPreferences
@@ -42,9 +47,11 @@ object AppModule {
     @Singleton
     @Provides
     fun provideUserPreferences(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        crypto: Crypto,
+        secretKey: ISecretKey
     ): UserPreferences {
-        return UserPreferences(context)
+        return UserPreferences(context, crypto, secretKey)
     }
 
     @Provides
@@ -60,5 +67,15 @@ object AppModule {
         userApi: UserApi
     ): UserRepository {
         return UserRepository(userApi)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSecretKey(
+        @ApplicationContext context: Context
+    ): ISecretKey = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        AfterMSecretKey()
+    } else {
+        BeforeMSecretKey(context)
     }
 }
