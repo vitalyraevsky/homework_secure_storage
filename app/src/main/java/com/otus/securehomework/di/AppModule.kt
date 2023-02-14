@@ -2,6 +2,7 @@ package com.otus.securehomework.di
 
 import android.content.Context
 import android.os.Build
+import com.otus.securehomework.data.biometric.BiometricHelper
 import com.otus.securehomework.data.crypto.AfterMSecretKey
 import com.otus.securehomework.data.crypto.BeforeMSecretKey
 import com.otus.securehomework.data.crypto.Crypto
@@ -14,6 +15,8 @@ import com.otus.securehomework.data.source.network.UserApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
@@ -78,4 +81,12 @@ object AppModule {
     } else {
         BeforeMSecretKey(context)
     }
+}
+
+@Module
+@InstallIn(ActivityComponent::class)
+object ActivityComponent {
+
+    @Provides
+    fun provideBiometricHelper(@ActivityContext context: Context) = BiometricHelper(context)
 }
