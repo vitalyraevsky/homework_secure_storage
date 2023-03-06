@@ -5,7 +5,6 @@ import android.view.View
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.otus.securehomework.R
 import com.otus.securehomework.data.Response
@@ -25,27 +24,28 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private val viewModel by viewModels<AuthViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+        super.onViewCreated(view, savedInstanceState)
         binding = FragmentLoginBinding.bind(view)
 
         binding.progressbar.visible(false)
         binding.buttonLogin.enable(false)
 
-        viewModel.loginResponse.observe(viewLifecycleOwner, Observer {
-            binding.progressbar.visible(it is Response.Loading)
-            when (it) {
+        viewModel.loginResponse.observe(viewLifecycleOwner) { response ->
+            binding.progressbar.visible(response is Response.Loading)
+            when (response) {
                 is Response.Success -> {
                     lifecycleScope.launch {
                         viewModel.saveAccessTokens(
-                            it.value.user.access_token!!,
-                            it.value.user.refresh_token!!
+                            response.value.user.access_token!!,
+                            response.value.user.refresh_token!!
                         )
                         requireActivity().startNewActivity(HomeActivity::class.java)
                     }
                 }
-                is Response.Failure -> handleApiError(it) { login() }
+                is Response.Failure -> handleApiError(response) { login() }
+                else -> Unit
             }
-        })
+        }
         binding.editTextTextPassword.addTextChangedListener {
             val email = binding.editTextTextEmailAddress.text.toString().trim()
             binding.buttonLogin.enable(email.isNotEmpty() && it.toString().isNotEmpty())
