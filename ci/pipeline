@@ -1,0 +1,27 @@
+pipeline {
+    agent {
+        docker {
+            image 'android-sdk'
+            args '-it --memory=6g --cpus="4"'
+        }
+    }
+
+    stages {
+        stage('init') {
+            steps {
+                sh "chmod +x gradlew"
+                sh "./gradlew"
+            }
+        }
+        stage('build') {
+            steps {
+                sh "./gradlew assembleDebug"
+            }
+        }
+    }
+    post {
+        always {
+            archiveArtifacts(artifacts: 'app/build/reports/**', allowEmptyArchive: true)
+        }
+    }
+}
