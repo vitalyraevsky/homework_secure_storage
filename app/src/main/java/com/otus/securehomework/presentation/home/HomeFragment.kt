@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.otus.securehomework.R
 import com.otus.securehomework.data.Response
 import com.otus.securehomework.data.dto.User
@@ -12,6 +13,7 @@ import com.otus.securehomework.presentation.handleApiError
 import com.otus.securehomework.presentation.logout
 import com.otus.securehomework.presentation.visible
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -26,7 +28,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         viewModel.getUser()
 
-        viewModel.user.observe(viewLifecycleOwner, {
+        viewModel.user.observe(viewLifecycleOwner) {
             when (it) {
                 is Response.Success -> {
                     binding.progressbar.visible(false)
@@ -39,10 +41,20 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     handleApiError(it)
                 }
             }
-        })
+        }
 
         binding.buttonLogout.setOnClickListener {
             logout()
+        }
+
+        binding.checkBioEnabled.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setLoginBiometry(isChecked)
+        }
+
+        lifecycleScope.launchWhenResumed {
+            viewModel.isBiometricLoginEnabled.collect {
+                binding.checkBioEnabled.isChecked = it
+            }
         }
     }
 
