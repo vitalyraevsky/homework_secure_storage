@@ -1,6 +1,12 @@
 package com.otus.securehomework.di
 
 import android.content.Context
+import android.os.Build
+import com.otus.securehomework.data.biometric.BiometricCipher
+import com.otus.securehomework.data.biometric.BiometricController
+import com.otus.securehomework.data.biometric.BiometricController23APIImpl
+import com.otus.securehomework.data.biometric.BiometricControllerLess23APIImpl
+import com.otus.securehomework.data.crypto.*
 import com.otus.securehomework.data.repository.AuthRepository
 import com.otus.securehomework.data.repository.UserRepository
 import com.otus.securehomework.data.source.local.UserPreferences
@@ -42,9 +48,11 @@ object AppModule {
     @Singleton
     @Provides
     fun provideUserPreferences(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        keys: AppKeyGenerator,
+        secure: Secure,
     ): UserPreferences {
-        return UserPreferences(context)
+        return UserPreferences(context, keys, secure)
     }
 
     @Provides
@@ -57,8 +65,36 @@ object AppModule {
 
     @Provides
     fun provideUserRepository(
-        userApi: UserApi
+        userApi: UserApi,
+        userPreferences: UserPreferences
     ): UserRepository {
-        return UserRepository(userApi)
+        return UserRepository(userApi, userPreferences)
+    }
+
+    @Provides
+    @Singleton
+    fun provideKeys(
+        @ApplicationContext context: Context
+    ): AppKeyGenerator {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            AesKeyGenerator()
+        } else {
+            RsaKeyGenerator(context)
+        }
+    }
+
+    @Provides
+    fun provideBiometricController(
+        biometricCipher: BiometricCipher
+    ): BiometricController =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            BiometricController23APIImpl(biometricCipher = biometricCipher)
+        } else {
+            BiometricControllerLess23APIImpl()
+        }
+
+    @Provides
+    fun provideSecure(): Secure {
+        return Secure()
     }
 }

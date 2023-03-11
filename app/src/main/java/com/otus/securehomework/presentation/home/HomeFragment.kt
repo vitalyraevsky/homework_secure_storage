@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.otus.securehomework.R
 import com.otus.securehomework.data.Response
 import com.otus.securehomework.data.dto.User
@@ -12,6 +13,7 @@ import com.otus.securehomework.presentation.handleApiError
 import com.otus.securehomework.presentation.logout
 import com.otus.securehomework.presentation.visible
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -43,6 +45,22 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         binding.buttonLogout.setOnClickListener {
             logout()
+        }
+
+        initBiometricCheckBox()
+    }
+
+    private fun initBiometricCheckBox() {
+        binding.cbBiometric.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                viewModel.enableBiometricAuth()
+            } else {
+                viewModel.disableBiometricAuth()
+            }
+        }
+
+        viewModel.biometricSettings.observe(viewLifecycleOwner) {
+            binding.cbBiometric.isChecked = it
         }
     }
 

@@ -65,6 +65,15 @@
         android:text="@string/logout"
         style="@style/ButtonPrimary" />
 
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/cbBiometric"
+        android:text="Use biometric for app auth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_logout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"/>
+
     <ProgressBar
         android:id="@+id/progressbar"
         android:layout_width="wrap_content"

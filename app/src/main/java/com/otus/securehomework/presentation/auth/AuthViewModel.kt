@@ -29,7 +29,7 @@ class AuthViewModel
         _loginResponse.value = repository.login(email, password)
     }
 
-    suspend fun saveAccessTokens(accessToken: String, refreshToken: String) {
+    suspend fun saveAccessTokens(accessToken: CharSequence, refreshToken: CharSequence) {
         repository.saveAccessTokens(accessToken, refreshToken)
     }
 }

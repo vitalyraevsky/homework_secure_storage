@@ -19,7 +19,7 @@ class AuthRepository
         return safeApiCall { api.login(email, password) }
     }
 
-    suspend fun saveAccessTokens(accessToken: String, refreshToken: String) {
+    suspend fun saveAccessTokens(accessToken: CharSequence, refreshToken: CharSequence) {
         preferences.saveAccessTokens(accessToken, refreshToken)
     }
 }
