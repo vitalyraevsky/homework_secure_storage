@@ -4,18 +4,47 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_auth"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/authFragment">
+
+    <fragment
+        android:id="@+id/authFragment"
+        android:label="fragment_auth"
+        android:name="com.otus.securehomework.presentation.auth.AuthFragment"
+        tools:layout="@layout/fragment_auth">
+
+        <action
+            android:id="@+id/to_register_action"
+            app:destination="@+id/registrationFragment" />
+
+        <action
+            android:id="@+id/to_login_action"
+            app:destination="@+id/loginFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/loginFragment"
         android:label="fragment_register"
         android:name="com.otus.securehomework.presentation.auth.LoginFragment"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login">
+
+        <action
+            android:id="@+id/to_register_action"
+            app:destination="@+id/registrationFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/registrationFragment"
         android:label="fragment_register"
         android:name="com.otus.securehomework.presentation.auth.RegisterFragment"
-        tools:layout="@layout/fragment_register" />
+        tools:layout="@layout/fragment_register">
+
+        <action
+            android:id="@+id/to_login_action"
+            app:destination="@+id/loginFragment"
+            app:popUpTo="@id/registrationFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 
 </navigation>

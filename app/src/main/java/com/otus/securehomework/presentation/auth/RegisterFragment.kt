@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.otus.securehomework.R
 import com.otus.securehomework.databinding.FragmentLoginBinding
 import com.otus.securehomework.databinding.FragmentRegisterBinding
@@ -19,5 +20,8 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentRegisterBinding.bind(view)
 
+        binding.textViewLoginNow.setOnClickListener {
+            findNavController().navigate(R.id.to_login_action)
+        }
     }
 }
