@@ -6,6 +6,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.otus.securehomework.R
 import com.otus.securehomework.data.Response
 import com.otus.securehomework.presentation.handleApiError
@@ -52,6 +53,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
         binding.buttonLogin.setOnClickListener {
             login()
+        }
+        binding.textViewRegisterNow.setOnClickListener {
+            findNavController().navigate(R.id.to_register_action)
         }
     }
 

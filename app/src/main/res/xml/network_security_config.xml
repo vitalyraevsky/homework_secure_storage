@@ -13,6 +13,7 @@
             <pin digest="SHA-256">dvAWD7qJt9UGvNfgA2v2ipbmKOLaGjkHaFI3n/lnao4=</pin>
             <pin digest="SHA-256">aWy6Ieo5zHo8rILDVO5b0T2cfmnNs7qDJkq3O2wv7Qo=</pin>
             <pin digest="SHA-256">jQJTbIh0grw0/1TkHSumWb+Fs0Ggogr621gT3PvPKG0=</pin>
+            <pin digest="SHA-256">Z2VnEkR3LsSFLmZqJoqPNTAytDngVK5hGHmEfiE9eYs=</pin>
         </pin-set>
         <trust-anchors>
             <certificates src="@raw/isrgrootx1" />
