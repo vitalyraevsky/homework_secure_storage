@@ -1,29 +1,26 @@
 package com.otus.securehomework.di
 
-import android.content.Context
-import com.otus.securehomework.data.repository.AuthRepository
-import com.otus.securehomework.data.repository.UserRepository
-import com.otus.securehomework.data.source.local.UserPreferences
+import android.os.Build
+import com.otus.securehomework.data.security.IEncryptorDecryptor
+import com.otus.securehomework.data.security.IKeyGenerator
+import com.otus.securehomework.data.security.biometric.BiometricCipher
+import com.otus.securehomework.data.security.biometric.BiometricControllerImpl
+import com.otus.securehomework.data.security.biometric.BiometricControllerStub
+import com.otus.securehomework.data.security.biometric.IBiometricController
+import com.otus.securehomework.data.security.impl.AesKeyGeneratorMImpl
+import com.otus.securehomework.data.security.impl.EncryptorDecryptorImpl
+import com.otus.securehomework.data.security.impl.OlderVersionKeyGeneratorImpl
 import com.otus.securehomework.data.source.network.AuthApi
 import com.otus.securehomework.data.source.network.UserApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-    @Singleton
-    @Provides
-    fun provideRemoteDataSource(
-        userPreferences: UserPreferences
-    ): RemoteDataSource {
-        return RemoteDataSource(userPreferences)
-    }
 
     @Provides
     fun provideAuthApi(
@@ -41,24 +38,28 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideUserPreferences(
-        @ApplicationContext context: Context
-    ): UserPreferences {
-        return UserPreferences(context)
-    }
+    fun provideIKeyGenerator(
+        aesKeyGeneratorMImpl: AesKeyGeneratorMImpl,
+        olderVersionKeyGenerator: OlderVersionKeyGeneratorImpl
+    ): IKeyGenerator =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            aesKeyGeneratorMImpl
+        } else {
+            olderVersionKeyGenerator
+        }
 
     @Provides
-    fun provideAuthRepository(
-        authApi: AuthApi,
-        userPreferences: UserPreferences
-    ): AuthRepository {
-        return AuthRepository(authApi, userPreferences)
-    }
+    fun provideIEncryptorDecryptor(
+        encryptorDecryptorImpl: EncryptorDecryptorImpl
+    ): IEncryptorDecryptor = encryptorDecryptorImpl
 
     @Provides
-    fun provideUserRepository(
-        userApi: UserApi
-    ): UserRepository {
-        return UserRepository(userApi)
-    }
+    fun provideBiometricController(
+        biometricCipher: BiometricCipher
+    ): IBiometricController =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            BiometricControllerImpl(biometricCipher = biometricCipher)
+        } else {
+            BiometricControllerStub()
+        }
 }
