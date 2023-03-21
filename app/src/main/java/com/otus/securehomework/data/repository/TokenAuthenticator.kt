@@ -21,9 +21,9 @@ class TokenAuthenticator @Inject constructor(
         return runBlocking {
             when (val tokenResponse = getUpdatedToken()) {
                 is DataResponse.Success -> {
-                    preferences.saveAccessTokens(
-                        tokenResponse.value.access_token,
-                        tokenResponse.value.refresh_token
+                    preferences.encryptAndSaveAccessTokens(
+                        tokenResponse.value.access_token!!,
+                        tokenResponse.value.refresh_token!!
                     )
                     response.request.newBuilder()
                         .header("Authorization", "Bearer ${tokenResponse.value.access_token}")
@@ -35,7 +35,7 @@ class TokenAuthenticator @Inject constructor(
     }
 
     private suspend fun getUpdatedToken(): DataResponse<TokenResponse> {
-        val refreshToken = preferences.refreshToken.first()
+        val refreshToken = preferences.getDecryptedRefreshToken()
         return safeApiCall {
             tokenApi.refreshAccessToken(refreshToken)
         }
