@@ -1,11 +1,15 @@
 package com.otus.securehomework.di
 
 import android.content.Context
+import android.os.Build
 import com.otus.securehomework.data.repository.AuthRepository
 import com.otus.securehomework.data.repository.UserRepository
 import com.otus.securehomework.data.source.local.UserPreferences
 import com.otus.securehomework.data.source.network.AuthApi
 import com.otus.securehomework.data.source.network.UserApi
+import com.otus.securehomework.security.token.IToken
+import com.otus.securehomework.security.token.TokenImpl
+import com.otus.securehomework.security.token.TokenImplM
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,9 +46,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideUserPreferences(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        token: IToken,
     ): UserPreferences {
-        return UserPreferences(context)
+        return UserPreferences(context, token)
     }
 
     @Provides
@@ -61,4 +66,12 @@ object AppModule {
     ): UserRepository {
         return UserRepository(userApi)
     }
+
+    @Singleton
+    @Provides
+    fun provideIToken(
+        @ApplicationContext context: Context,
+    ): IToken = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) TokenImplM()
+    else TokenImpl(context)
+
 }
