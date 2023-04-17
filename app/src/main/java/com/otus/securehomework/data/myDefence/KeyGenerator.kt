@@ -78,7 +78,6 @@ class KeyGenerator @Inject constructor(
         )
             .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
             .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
-            .setUserAuthenticationRequired(true)
             .setRandomizedEncryptionRequired(false)
             .build()
     }

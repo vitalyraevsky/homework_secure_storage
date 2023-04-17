@@ -24,7 +24,8 @@ class UserPreferences
 
     val accessToken: Flow<String?>
         get() = context.dataStore.data.map { preferences ->
-            getDecryptedAccessToken(preferences[ACCESS_TOKEN])
+            preferences[ACCESS_TOKEN]
+            //getDecryptedAccessToken(preferences[ACCESS_TOKEN])
         }
 
     val refreshToken: Flow<String?>
