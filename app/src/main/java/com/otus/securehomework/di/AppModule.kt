@@ -1,11 +1,16 @@
 package com.otus.securehomework.di
 
 import android.content.Context
+import com.otus.securehomework.data.myDefence.Biometry
+import com.otus.securehomework.data.myDefence.KeyGenerator
+import com.otus.securehomework.data.myDefence.Security
+import com.otus.securehomework.data.myDefence.impl.BiometryImpl
 import com.otus.securehomework.data.repository.AuthRepository
 import com.otus.securehomework.data.repository.UserRepository
 import com.otus.securehomework.data.source.local.UserPreferences
 import com.otus.securehomework.data.source.network.AuthApi
 import com.otus.securehomework.data.source.network.UserApi
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,9 +47,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideUserPreferences(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        security: Security
     ): UserPreferences {
-        return UserPreferences(context)
+        return UserPreferences(context, security)
     }
 
     @Provides
@@ -61,4 +67,16 @@ object AppModule {
     ): UserRepository {
         return UserRepository(userApi)
     }
+
+    @Provides
+    @Singleton
+    fun provideKeyGenerator(
+        @ApplicationContext context: Context
+    ) = KeyGenerator(context)
+
+    @Provides
+    @Singleton
+    fun provideSecurity(
+        keyGen: KeyGenerator
+    ) = Security(keyGen)
 }
