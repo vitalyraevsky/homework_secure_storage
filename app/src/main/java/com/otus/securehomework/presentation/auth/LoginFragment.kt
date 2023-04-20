@@ -31,6 +31,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         binding.progressbar.visible(false)
         binding.buttonLogin.enable(false)
 
+        binding.editTextTextEmailAddress.setText("otus@test.com")
+        binding.editTextTextPassword.setText("otus")
+
         viewModel.loginResponse.observe(viewLifecycleOwner, Observer {
             binding.progressbar.visible(it is Response.Loading)
             when (it) {
@@ -44,6 +47,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     }
                 }
                 is Response.Failure -> handleApiError(it) { login() }
+                else -> {}
             }
         })
         binding.editTextTextPassword.addTextChangedListener {

@@ -53,6 +53,43 @@
 
         </TableRow>
 
+        <TableRow>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BIOMETRIC STATUS:"
+                android:layout_marginTop="32dp"/>
+        </TableRow>
+
+        <TableRow>
+
+            <RadioGroup
+                android:id="@+id/biometricMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/off"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="OFF" />
+
+                <RadioButton
+                    android:id="@+id/weak"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="WEAK" />
+
+                <RadioButton
+                    android:id="@+id/strong"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="STRONG" />
+
+            </RadioGroup>
+
+        </TableRow>
+
     </TableLayout>
 
     <Button
