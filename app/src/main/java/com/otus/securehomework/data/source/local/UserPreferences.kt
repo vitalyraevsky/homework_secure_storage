@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-private const val dataStoreFile: String = "securePref"
+private const val dataStoreFile: String = "securePrefX"
 
 class UserPreferences
 @Inject constructor(

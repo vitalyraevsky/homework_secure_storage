@@ -1,5 +1,6 @@
 package com.otus.securehomework.data.repository
 
+import android.util.Log
 import com.otus.securehomework.data.crypto.SecuredTokenStorage
 import com.otus.securehomework.data.dto.TokenResponse
 import com.otus.securehomework.data.source.local.UserPreferences
@@ -23,6 +24,7 @@ class TokenAuthenticator @Inject constructor(
             when (val tokenResponse = getUpdatedToken()) {
                 is DataResponse.Success -> {
 
+                    Log.d("save access token", "tokenStorage.saveAccessToken")
                     tokenStorage.saveAccessToken(tokenResponse.value.access_token)
                     tokenStorage.saveRefreshToken(tokenResponse.value.refresh_token)
 

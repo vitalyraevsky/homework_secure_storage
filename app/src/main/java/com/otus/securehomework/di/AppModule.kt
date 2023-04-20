@@ -27,20 +27,21 @@ object AppModule {
     fun provideSecuredTokenStorage(
         @ApplicationContext context: Context
     ): SecuredTokenStorage{
+        return PreMTokenStorageImpl(context, context.dataStore)
+        /*
         return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M){
-            PostMTokenStorageImpl(context.dataStore)
+            PostMTokenStorageImpl(context, context.dataStore)
         } else{
-            PreMTokenStorageImpl(context.dataStore)
-        }
+            PreMTokenStorageImpl(context, context.dataStore)
+        }*/
     }
 
     @Singleton
     @Provides
     fun provideRemoteDataSource(
-        userPreferences: UserPreferences,
         tokenStorage: SecuredTokenStorage
     ): RemoteDataSource {
-        return RemoteDataSource(userPreferences, tokenStorage)
+        return RemoteDataSource(tokenStorage)
     }
 
     @Provides
@@ -68,10 +69,9 @@ object AppModule {
     @Provides
     fun provideAuthRepository(
         authApi: AuthApi,
-        userPreferences: UserPreferences,
         tokenStorage: SecuredTokenStorage
     ): AuthRepository {
-        return AuthRepository(authApi, userPreferences, tokenStorage)
+        return AuthRepository(authApi, tokenStorage)
     }
 
     @Provides

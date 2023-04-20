@@ -1,10 +1,12 @@
 package com.otus.securehomework.data.crypto
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Build
+import android.provider.Settings
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -12,6 +14,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.nio.charset.Charset
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -19,6 +22,7 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
 
 class PostMTokenStorageImpl(
+    private val context: Context,
     private val dataStore: DataStore<Preferences>
 ): SecuredTokenStorage {
 
@@ -38,7 +42,6 @@ class PostMTokenStorageImpl(
             KeyGenParameterSpec.Builder(keyAlias, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
                 .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
-                .setUserAuthenticationRequired(true)
                 .setRandomizedEncryptionRequired(false)
                 .build()
             )
@@ -51,48 +54,40 @@ class PostMTokenStorageImpl(
         return keyStore.getKey(keyAlias, null) as? SecretKey ?: generateSecretKey()
     }
 
-    private val iv = byteArrayOf(0x48, 0x13, 0x48, 0x48, 0x22, 0x48, 0xa8.toByte(), 0x21, 0x48, 0x0f, 0x48, 0x48, 0x18, 0x48,
-        0xff.toByte(), 0x48)
-
     @RequiresApi(Build.VERSION_CODES.M)
     private fun encryptAes(plainText: String): String {
-
-        val ivParams = IvParameterSpec(iv)
-
-        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding").apply {
-            init(Cipher.ENCRYPT_MODE, getSecretKey(), ivParams)
-        }
-        val encodedBytes = cipher.doFinal(plainText.toByteArray())
-        return Base64.encodeToString(encodedBytes, Base64.DEFAULT)
+        val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding")
+        val ivParams = IvParameterSpec(iv())
+        cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(), ivParams)
+        val encodedBytes = cipher.doFinal(plainText.toByteArray(Charset.forName("UTF-8")))
+        return Base64.encodeToString(encodedBytes, Base64.NO_WRAP)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun decryptAes(encrypted: String?): String {
-        encrypted ?: return ""
-
-        val ivParams = IvParameterSpec(iv)
-
-        Log.d("Secret key", getSecretKey().toString())
-
-        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding").apply {
-            init(Cipher.ENCRYPT_MODE, getSecretKey(), ivParams)
-        }
-        val decodedBytes = Base64.decode(encrypted.toByteArray(), Base64.DEFAULT)
-        val decoded = cipher.doFinal(decodedBytes)
-        return String(decoded, Charsets.UTF_8)
+    private fun decryptAes(encrypted: String?): String? {
+        encrypted ?: return null
+        val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding")
+        val ivParams = IvParameterSpec(iv())
+        cipher.init(Cipher.DECRYPT_MODE, getSecretKey(), ivParams)
+        val base64Decoded = Base64.decode(encrypted, Base64.NO_WRAP)
+        return String(cipher.doFinal(base64Decoded), Charset.forName("UTF-8"))
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
     override suspend fun saveAccessToken(token: String?) {
         dataStore.edit { preferences ->
-            token?.let { preferences[stringPreferencesKey("key_access_token")] = encryptAes(it) }
+            token?.let {
+                preferences[stringPreferencesKey("key_access_token")] = encryptAes(it)
+            }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
     override suspend fun saveRefreshToken(token: String?) {
         dataStore.edit { preferences ->
-            token?.let { preferences[stringPreferencesKey("key_refresh_token")] = encryptAes(it) }
+            token?.let {
+                preferences[stringPreferencesKey("key_refresh_token")] = encryptAes(it)
+            }
         }
     }
 
@@ -108,6 +103,12 @@ class PostMTokenStorageImpl(
         return dataStore.data.map { preferences ->
             decryptAes(preferences[stringPreferencesKey("key_refresh_token")])
         }
+    }
+
+    @SuppressLint("HardwareIds")
+    private fun iv(): ByteArray {
+        val id = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        return id.toByteArray(Charset.forName("UTF-8"))
     }
 
 }
