@@ -7,14 +7,21 @@ import androidx.fragment.app.viewModels
 import com.otus.securehomework.R
 import com.otus.securehomework.data.Response
 import com.otus.securehomework.data.dto.User
+import com.otus.securehomework.data.repository.BiometricRepository
+import com.otus.securehomework.data.repository.BiometricState
 import com.otus.securehomework.databinding.FragmentHomeBinding
 import com.otus.securehomework.presentation.handleApiError
 import com.otus.securehomework.presentation.logout
 import com.otus.securehomework.presentation.visible
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
+
+
+    @Inject
+    lateinit var biometricRepository: BiometricRepository
 
     private lateinit var binding: FragmentHomeBinding
     private val viewModel by viewModels<HomeViewModel>()
@@ -44,6 +51,23 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding.buttonLogout.setOnClickListener {
             logout()
         }
+
+
+        when(biometricRepository.getBiometricState()){
+            BiometricState.OFF -> binding.biometricMode.check(R.id.off)
+            BiometricState.WEAK -> binding.biometricMode.check(R.id.weak)
+            BiometricState.STRONG -> binding.biometricMode.check(R.id.strong)
+        }
+
+        binding.biometricMode.setOnCheckedChangeListener { group, checkedId ->
+            when(checkedId){
+                R.id.off -> biometricRepository.setBiometricState(BiometricState.OFF)
+                R.id.weak -> biometricRepository.setBiometricState(BiometricState.WEAK)
+                R.id.strong -> biometricRepository.setBiometricState(BiometricState.STRONG)
+            }
+        }
+
+
     }
 
     private fun updateUI(user: User) {
