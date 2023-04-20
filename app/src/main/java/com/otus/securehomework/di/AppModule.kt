@@ -1,9 +1,14 @@
 package com.otus.securehomework.di
 
 import android.content.Context
+import androidx.datastore.preferences.preferencesDataStore
+import com.otus.securehomework.data.crypto.PostMTokenStorageImpl
+import com.otus.securehomework.data.crypto.PreMTokenStorageImpl
+import com.otus.securehomework.data.crypto.SecuredTokenStorage
 import com.otus.securehomework.data.repository.AuthRepository
 import com.otus.securehomework.data.repository.UserRepository
 import com.otus.securehomework.data.source.local.UserPreferences
+import com.otus.securehomework.data.source.local.UserPreferences.Companion.dataStore
 import com.otus.securehomework.data.source.network.AuthApi
 import com.otus.securehomework.data.source.network.UserApi
 import dagger.Module
@@ -19,10 +24,23 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideSecuredTokenStorage(
+        @ApplicationContext context: Context
+    ): SecuredTokenStorage{
+        return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M){
+            PostMTokenStorageImpl(context.dataStore)
+        } else{
+            PreMTokenStorageImpl(context.dataStore)
+        }
+    }
+
+    @Singleton
+    @Provides
     fun provideRemoteDataSource(
-        userPreferences: UserPreferences
+        userPreferences: UserPreferences,
+        tokenStorage: SecuredTokenStorage
     ): RemoteDataSource {
-        return RemoteDataSource(userPreferences)
+        return RemoteDataSource(userPreferences, tokenStorage)
     }
 
     @Provides
@@ -50,9 +68,10 @@ object AppModule {
     @Provides
     fun provideAuthRepository(
         authApi: AuthApi,
-        userPreferences: UserPreferences
+        userPreferences: UserPreferences,
+        tokenStorage: SecuredTokenStorage
     ): AuthRepository {
-        return AuthRepository(authApi, userPreferences)
+        return AuthRepository(authApi, userPreferences, tokenStorage)
     }
 
     @Provides

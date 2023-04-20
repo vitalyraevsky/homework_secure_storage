@@ -39,7 +39,7 @@ class UserPreferences
     }
 
     companion object {
-        private val Context.dataStore by preferencesDataStore(name = dataStoreFile)
+        val Context.dataStore by preferencesDataStore(name = dataStoreFile)
         private val ACCESS_TOKEN = stringPreferencesKey("key_access_token")
         private val REFRESH_TOKEN = stringPreferencesKey("key_refresh_token")
     }

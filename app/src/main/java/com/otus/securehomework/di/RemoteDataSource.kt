@@ -1,6 +1,7 @@
 package com.otus.securehomework.di
 
 import com.otus.securehomework.BuildConfig
+import com.otus.securehomework.data.crypto.SecuredTokenStorage
 import com.otus.securehomework.data.repository.TokenAuthenticator
 import com.otus.securehomework.data.source.local.UserPreferences
 import com.otus.securehomework.data.source.network.TokenRefreshApi
@@ -14,13 +15,14 @@ import javax.inject.Inject
 private const val BASE_URL = "https://auth.tragltech.com/otus/api/"
 
 class RemoteDataSource @Inject constructor(
-    private val preferences: UserPreferences
+    private val preferences: UserPreferences,
+    private val tokenStorage: SecuredTokenStorage
 ) {
 
     fun <Api> buildApi(
         api: Class<Api>,
     ): Api {
-        val authenticator = TokenAuthenticator(buildTokenApi(), preferences)
+        val authenticator = TokenAuthenticator(buildTokenApi(), tokenStorage)
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(getRetrofitClient(authenticator))
