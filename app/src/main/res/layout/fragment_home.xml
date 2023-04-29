@@ -55,11 +55,22 @@
 
     </TableLayout>
 
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/biometry_switch"
+        style="@style/TextDefault"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/table"
+        android:layout_alignStart="@id/table"
+        android:layout_alignEnd="@id/table"
+        android:layout_marginTop="12dp"
+        android:text="@string/auth_with_biometry" />
+
     <Button
         android:id="@+id/button_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/table"
+        android:layout_below="@id/biometry_switch"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
         android:text="@string/logout"
