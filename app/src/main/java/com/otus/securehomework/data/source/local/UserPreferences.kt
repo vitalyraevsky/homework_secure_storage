@@ -1,6 +1,7 @@
 package com.otus.securehomework.data.source.local
 
 import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -31,6 +32,11 @@ class UserPreferences
             }
         }
 
+    val authWithBiometry: Flow<Boolean>
+        get() = context.dataStore.data.map { preferences ->
+            preferences[AUTH_WITH_BIOMETRY_TOKEN] ?: false
+        }
+
     suspend fun saveAccessTokens(accessToken: String?, refreshToken: String?) {
         context.dataStore.edit { preferences ->
             accessToken?.let {
@@ -39,6 +45,12 @@ class UserPreferences
             refreshToken?.let {
                 preferences[REFRESH_TOKEN] = encryptor.encrypt(it)
             }
+        }
+    }
+
+    suspend fun changeBiometrySetting(isBiometryAuthEnabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[AUTH_WITH_BIOMETRY_TOKEN] = isBiometryAuthEnabled
         }
     }
 
@@ -52,5 +64,6 @@ class UserPreferences
         private val Context.dataStore by preferencesDataStore(name = dataStoreFile)
         private val ACCESS_TOKEN = stringPreferencesKey("key_access_token")
         private val REFRESH_TOKEN = stringPreferencesKey("key_refresh_token")
+        private val AUTH_WITH_BIOMETRY_TOKEN = booleanPreferencesKey("key_auth_with_biometry")
     }
 }

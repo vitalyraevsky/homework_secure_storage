@@ -10,8 +10,15 @@
     <string name="email_hint">myemail@gmail.com</string>
     <string name="password">password</string>
     <string name="login">Login</string>
+    <string name="auth_with_biometry">Auth with biometry</string>
     <string name="logout">Logout</string>
     <string name="forgot_your_password">Forgot your password?</string>
     <string name="register_now">Register Now</string>
     <string name="already_have_an_account_login_now">Already have an account? <b>Login Now</b></string>
+
+    <string name="biometry_authenticate">Authenticate with biometry</string>
+    <string name="cancel">Cancel</string>
+    <string name="biometric_hint">Log in using your biometric credential</string>
+    <string name="error_biometry_not_supported">Biometry not supported on your device</string>
+    <string name="failed_authentication">Failed authentication</string>
 </resources>
