@@ -14,4 +14,5 @@
     <string name="forgot_your_password">Forgot your password?</string>
     <string name="register_now">Register Now</string>
     <string name="already_have_an_account_login_now">Already have an account? <b>Login Now</b></string>
+    <string name="enable_biometric_auth">Enable biometric auth</string>
 </resources>
