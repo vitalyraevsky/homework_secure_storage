@@ -44,6 +44,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     }
                 }
                 is Response.Failure -> handleApiError(it) { login() }
+                else -> {}
             }
         })
         binding.editTextTextPassword.addTextChangedListener {

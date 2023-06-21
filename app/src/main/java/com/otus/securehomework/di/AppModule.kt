@@ -6,6 +6,8 @@ import com.otus.securehomework.data.repository.UserRepository
 import com.otus.securehomework.data.source.local.UserPreferences
 import com.otus.securehomework.data.source.network.AuthApi
 import com.otus.securehomework.data.source.network.UserApi
+import com.otus.securehomework.security.AesSecretKeyProvider
+import com.otus.securehomework.security.EncryptionAes
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,10 +44,15 @@ object AppModule {
     @Singleton
     @Provides
     fun provideUserPreferences(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        encryptionAes: EncryptionAes
     ): UserPreferences {
-        return UserPreferences(context)
+        return UserPreferences(context, encryptionAes)
     }
+
+    @Provides
+    fun providesEncryptionAes(aesSecretKeyProvider: AesSecretKeyProvider) =
+        EncryptionAes(aesSecretKeyProvider)
 
     @Provides
     fun provideAuthRepository(
