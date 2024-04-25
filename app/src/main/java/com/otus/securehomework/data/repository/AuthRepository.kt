@@ -12,12 +12,8 @@ class AuthRepository
     private val preferences: UserPreferences
 ) : BaseRepository(api) {
 
-    suspend fun login(
-        email: String,
-        password: String
-    ): Response<LoginResponse> {
-        return safeApiCall { api.login(email, password) }
-    }
+    suspend fun login(email: String, password: String): Response<LoginResponse> =
+        safeApiCall { api.login(email, password) }
 
     suspend fun saveAccessTokens(accessToken: String, refreshToken: String) {
         preferences.saveAccessTokens(accessToken, refreshToken)

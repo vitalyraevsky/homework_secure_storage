@@ -1,14 +1,14 @@
 buildscript {
-    ext.kotlin_version = "1.8.10"
+    ext.kotlin_version = "1.9.23"
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:7.3.1"
+        classpath 'com.android.tools.build:gradle:8.1.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.45'
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.5.3"
+        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.51.1'
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.7.7"
     }
 }
 

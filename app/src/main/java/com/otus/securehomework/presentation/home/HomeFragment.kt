@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.otus.securehomework.R
 import com.otus.securehomework.data.Response
+import com.otus.securehomework.data.dto.LoginResponse
 import com.otus.securehomework.data.dto.User
 import com.otus.securehomework.databinding.FragmentHomeBinding
 import com.otus.securehomework.presentation.handleApiError
@@ -26,23 +27,28 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         viewModel.getUser()
 
-        viewModel.user.observe(viewLifecycleOwner, {
-            when (it) {
-                is Response.Success -> {
-                    binding.progressbar.visible(false)
-                    updateUI(it.value.user)
-                }
-                is Response.Loading -> {
-                    binding.progressbar.visible(true)
-                }
-                is Response.Failure -> {
-                    handleApiError(it)
-                }
-            }
-        })
+        viewModel.user.observe(viewLifecycleOwner) {
+            onGetUser(it)
+        }
 
-        binding.buttonLogout.setOnClickListener {
-            logout()
+        binding.buttonLogout.setOnClickListener { logout() }
+    }
+
+    private fun onGetUser(it: Response<LoginResponse>) {
+        when (it) {
+            is Response.Success -> {
+                binding.progressbar.visible(false)
+                updateUI(it.value.user)
+            }
+
+            is Response.Loading -> {
+                binding.progressbar.visible(true)
+            }
+
+            is Response.Failure -> {
+                binding.progressbar.visible(false)
+                handleApiError(it)
+            }
         }
     }
 
