@@ -14,4 +14,11 @@
     <string name="forgot_your_password">Forgot your password?</string>
     <string name="register_now">Register Now</string>
     <string name="already_have_an_account_login_now">Already have an account? <b>Login Now</b></string>
+    <string name="biometric_title_strong">Strong biometry</string>
+    <string name="biometric_title_weak">Weak biometry</string>
+    <string name="biometric_subtitle">Input your biometry</string>
+    <string name="biometric_description">We need your finger</string>
+    <string name="biometric_negative_button">Dismiss</string>
+    <string name="biometric_auth_enable_button">Enable biometric auth </string>
+    <string name="biometric_auth_disable_button">Disable biometric auth </string>
 </resources>

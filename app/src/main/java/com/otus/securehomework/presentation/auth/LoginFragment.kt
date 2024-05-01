@@ -5,15 +5,15 @@ import android.view.View
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.otus.securehomework.R
 import com.otus.securehomework.data.Response
+import com.otus.securehomework.data.dto.LoginResponse
+import com.otus.securehomework.databinding.FragmentLoginBinding
+import com.otus.securehomework.presentation.enable
 import com.otus.securehomework.presentation.handleApiError
 import com.otus.securehomework.presentation.home.HomeActivity
 import com.otus.securehomework.presentation.startNewActivity
-import com.otus.securehomework.databinding.FragmentLoginBinding
-import com.otus.securehomework.presentation.enable
 import com.otus.securehomework.presentation.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -31,27 +31,37 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         binding.progressbar.visible(false)
         binding.buttonLogin.enable(false)
 
-        viewModel.loginResponse.observe(viewLifecycleOwner, Observer {
-            binding.progressbar.visible(it is Response.Loading)
-            when (it) {
-                is Response.Success -> {
-                    lifecycleScope.launch {
-                        viewModel.saveAccessTokens(
-                            it.value.user.access_token!!,
-                            it.value.user.refresh_token!!
-                        )
-                        requireActivity().startNewActivity(HomeActivity::class.java)
-                    }
-                }
-                is Response.Failure -> handleApiError(it) { login() }
-            }
-        })
+        viewModel.loginResponse.observe(viewLifecycleOwner) { onLoginResponse(it) }
         binding.editTextTextPassword.addTextChangedListener {
             val email = binding.editTextTextEmailAddress.text.toString().trim()
             binding.buttonLogin.enable(email.isNotEmpty() && it.toString().isNotEmpty())
         }
         binding.buttonLogin.setOnClickListener {
             login()
+        }
+    }
+
+    private fun onLoginResponse(it: Response<LoginResponse>) {
+        when (it) {
+            is Response.Success -> {
+                binding.progressbar.visible(false)
+                lifecycleScope.launch {
+                    viewModel.saveAccessTokens(
+                        it.value.user.access_token!!,
+                        it.value.user.refresh_token!!
+                    )
+                    requireActivity().startNewActivity(HomeActivity::class.java)
+                }
+            }
+
+            is Response.Failure -> {
+                binding.progressbar.visible(false)
+                handleApiError(it) { login() }
+            }
+
+            Response.Loading -> {
+                binding.progressbar.visible(true)
+            }
         }
     }
 

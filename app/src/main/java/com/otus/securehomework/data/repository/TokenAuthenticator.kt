@@ -17,8 +17,8 @@ class TokenAuthenticator @Inject constructor(
     private val preferences: UserPreferences
 ) : Authenticator, BaseRepository(tokenApi) {
 
-    override fun authenticate(route: Route?, response: Response): Request? {
-        return runBlocking {
+    override fun authenticate(route: Route?, response: Response): Request? =
+        runBlocking {
             when (val tokenResponse = getUpdatedToken()) {
                 is DataResponse.Success -> {
                     preferences.saveAccessTokens(
@@ -29,10 +29,10 @@ class TokenAuthenticator @Inject constructor(
                         .header("Authorization", "Bearer ${tokenResponse.value.access_token}")
                         .build()
                 }
+
                 else -> null
             }
         }
-    }
 
     private suspend fun getUpdatedToken(): DataResponse<TokenResponse> {
         val refreshToken = preferences.refreshToken.first()
