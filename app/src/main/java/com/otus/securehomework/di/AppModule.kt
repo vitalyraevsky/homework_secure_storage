@@ -7,6 +7,7 @@ import com.otus.securehomework.data.repository.UserRepository
 import com.otus.securehomework.data.source.local.UserPreferences
 import com.otus.securehomework.data.source.network.AuthApi
 import com.otus.securehomework.data.source.network.UserApi
+import com.otus.securehomework.domain.biometric.BiometricHelper
 import com.otus.securehomework.domain.secure.KeyProviderImpl
 import com.otus.securehomework.domain.secure.KeyProviderLessThanMImp
 import com.otus.securehomework.domain.secure.Security
@@ -36,6 +37,11 @@ object AppModule {
     fun provideUserApi(
         remoteDataSource: RemoteDataSource,
     ): UserApi = remoteDataSource.buildApi(UserApi::class.java)
+
+    @Provides
+    fun provideBiometricHelper(
+        @ApplicationContext context: Context
+    ) = BiometricHelper(context)
 
     @Singleton
     @Provides

@@ -4,21 +4,28 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.otus.securehomework.R
 import com.otus.securehomework.data.Response
 import com.otus.securehomework.data.dto.LoginResponse
 import com.otus.securehomework.data.dto.User
 import com.otus.securehomework.databinding.FragmentHomeBinding
+import com.otus.securehomework.domain.biometric.BiometricHelper
 import com.otus.securehomework.presentation.handleApiError
 import com.otus.securehomework.presentation.logout
 import com.otus.securehomework.presentation.visible
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private lateinit var binding: FragmentHomeBinding
     private val viewModel by viewModels<HomeViewModel>()
+
+    @Inject
+    lateinit var biometricHelper: BiometricHelper
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -32,6 +39,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
 
         binding.buttonLogout.setOnClickListener { logout() }
+        binding.biometricAuthDisabled.setOnClickListener {
+            lifecycleScope.launch { biometricHelper.enableAuth(false) }
+        }
+        binding.biometricAuthEnabled.setOnClickListener {
+            lifecycleScope.launch { biometricHelper.enableAuth(false) }
+        }
     }
 
     private fun onGetUser(it: Response<LoginResponse>) {
