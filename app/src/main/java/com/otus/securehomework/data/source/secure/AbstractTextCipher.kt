@@ -5,15 +5,21 @@ import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 import java.security.KeyStore
+import java.security.spec.AlgorithmParameterSpec
+
+const val KEY_PROVIDER = "AndroidKeyStore"
 
 private const val AES_TRANSFORMATION = "AES/GCM/NoPadding"
-const val KEY_PROVIDER = "AndroidKeyStore"
+private const val IV = "3134003223491201"
+private const val GCM_IV_LENGTH = 12
 
 /**
  * Абстрактный класс для безопасного хранилища.
  * Содержит общую логику для шифрования и дешифрования.
  */
 abstract class AbstractTextCipher : TextCipher {
+
+    private val FIXED_IV = IV.toByteArray()
 
     protected val keyStore: KeyStore by lazy {
         KeyStore.getInstance(KEY_PROVIDER).apply {
@@ -30,11 +36,9 @@ abstract class AbstractTextCipher : TextCipher {
     override fun encrypt(text: String): String {
         val secretKey = getAesSecretKey()
         val cipher = Cipher.getInstance(AES_TRANSFORMATION)
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey)
-        val iv = cipher.iv
-        val encryptedBytes = cipher.doFinal(text.toByteArray(Charsets.UTF_8))
-        val combined = iv + encryptedBytes
-        return Base64.encodeToString(combined, Base64.DEFAULT)
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, getInitializationVector())
+        val encodedBytes = cipher.doFinal(text.toByteArray())
+        return Base64.encodeToString(encodedBytes, Base64.NO_WRAP)
     }
 
     /**
@@ -44,16 +48,21 @@ abstract class AbstractTextCipher : TextCipher {
      * @return Расшифрованный открытый текст.
      */
     override fun decrypt(encryptedText: String): String {
-        val decoded = Base64.decode(encryptedText, Base64.DEFAULT)
-        val iv = decoded.sliceArray(0 until 12) // Длина IV для GCM
-        val encryptedBytes = decoded.sliceArray(12 until decoded.size)
         val secretKey = getAesSecretKey()
         val cipher = Cipher.getInstance(AES_TRANSFORMATION)
-        val spec = GCMParameterSpec(128, iv)
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, spec)
-        val decryptedBytes = cipher.doFinal(encryptedBytes)
-        return String(decryptedBytes, Charsets.UTF_8)
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, getInitializationVector())
+        val decodedBytes = Base64.decode(encryptedText, Base64.NO_WRAP)
+        val decoded = cipher.doFinal(decodedBytes)
+        return String(decoded, Charsets.UTF_8)
     }
+
+
+    private fun getInitializationVector(): AlgorithmParameterSpec {
+        val iv = ByteArray(GCM_IV_LENGTH)
+        FIXED_IV.copyInto(iv, 0, GCM_IV_LENGTH)
+        return GCMParameterSpec(128, iv)
+    }
+
 
     /**
      * Абстрактный метод для получения секретного ключа AES.
