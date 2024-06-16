@@ -1,11 +1,15 @@
 package com.otus.securehomework.di
 
 import android.content.Context
+import android.os.Build
 import com.otus.securehomework.data.repository.AuthRepository
 import com.otus.securehomework.data.repository.UserRepository
 import com.otus.securehomework.data.source.local.UserPreferences
 import com.otus.securehomework.data.source.network.AuthApi
 import com.otus.securehomework.data.source.network.UserApi
+import com.otus.securehomework.data.source.secure.TextCipher
+import com.otus.securehomework.data.source.secure.TextCipherLegacy
+import com.otus.securehomework.data.source.secure.TextCipherModern
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,10 +45,23 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideTextCipher(
+        @ApplicationContext
+        context: Context
+    ): TextCipher = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        TextCipherModern(context)
+    } else {
+        TextCipherLegacy(context)
+    }
+
+    @Singleton
+    @Provides
     fun provideUserPreferences(
-        @ApplicationContext context: Context
+        @ApplicationContext
+        context: Context,
+        cipher: TextCipher
     ): UserPreferences {
-        return UserPreferences(context)
+        return UserPreferences(context, cipher)
     }
 
     @Provides
