@@ -11,6 +11,8 @@ android {
     compileSdk = 34
     buildToolsVersion = "34.0.0"
 
+    compileSdkPreview = "VanillaIceCream"
+
     defaultConfig {
         applicationId = "com.otus.myapplication"
         minSdk = 21
@@ -55,6 +57,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
+    implementation("androidx.biometric:biometric-ktx:1.4.0-alpha01")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")

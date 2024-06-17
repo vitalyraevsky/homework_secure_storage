@@ -17,6 +17,11 @@ class HomeViewModel
     private val repository: UserRepository
 ) : BaseViewModel(repository) {
 
+    /**
+     * Проверена или нет биометрия пользователя.
+     */
+    var bioWasChecked: Boolean = false
+
     private val _user: MutableLiveData<Response<LoginResponse>> = MutableLiveData()
     val user: LiveData<Response<LoginResponse>>
         get() = _user
