@@ -1,8 +1,14 @@
 package com.otus.securehomework.di
 
 import android.content.Context
+import android.os.Build
 import com.otus.securehomework.data.repository.AuthRepository
 import com.otus.securehomework.data.repository.UserRepository
+import com.otus.securehomework.data.security.AesHelper
+import com.otus.securehomework.data.security.KeyProvider
+import com.otus.securehomework.data.security.KeyProviderBelowM
+import com.otus.securehomework.data.security.KeyProviderMAndAbove
+import com.otus.securehomework.data.security.SHARED_PREFERENCE_NAME
 import com.otus.securehomework.data.source.local.UserPreferences
 import com.otus.securehomework.data.source.network.AuthApi
 import com.otus.securehomework.data.source.network.UserApi
@@ -42,9 +48,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideUserPreferences(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        keyProvider: KeyProvider,
     ): UserPreferences {
-        return UserPreferences(context)
+        return UserPreferences(context, keyProvider, AesHelper())
     }
 
     @Provides
@@ -60,5 +67,23 @@ object AppModule {
         userApi: UserApi
     ): UserRepository {
         return UserRepository(userApi)
+    }
+
+    @Singleton
+    @Provides
+    fun provideKeyProvider(
+        @ApplicationContext context: Context
+    ): KeyProvider {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            KeyProviderMAndAbove()
+        } else {
+            KeyProviderBelowM(
+                context = context,
+                sharedPreferences = context.getSharedPreferences(
+                    SHARED_PREFERENCE_NAME,
+                    Context.MODE_PRIVATE
+                )
+            )
+        }
     }
 }

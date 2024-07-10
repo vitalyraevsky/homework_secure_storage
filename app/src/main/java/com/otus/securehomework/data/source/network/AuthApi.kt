@@ -11,6 +11,6 @@ interface AuthApi : BaseApi {
     @POST("auth/login")
     suspend fun login(
         @Field("email") email: String,
-        @Field("password") password: String
+        @Field("password") password: CharSequence
     ): LoginResponse
 }
