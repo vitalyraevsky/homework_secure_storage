@@ -66,4 +66,5 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 
     implementation("androidx.security:security-crypto:1.1.0-alpha04")
+    implementation ("androidx.biometric:biometric-ktx:1.2.0-alpha05")
 }
