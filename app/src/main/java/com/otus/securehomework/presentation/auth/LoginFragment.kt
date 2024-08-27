@@ -161,7 +161,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
     }
 
-    fun showTwoOptionDialog(
+    private fun showTwoOptionDialog(
         context: Context,
         title: String,
         message: String,
@@ -171,23 +171,16 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         onNegativeClick: () -> Unit
     ) {
         val builder = AlertDialog.Builder(context)
-
         builder.setTitle(title)
         builder.setMessage(message)
-
-        // Устанавливаем положительную кнопку и её обработчик
         builder.setPositiveButton(positiveButtonText) { dialog, _ ->
             onPositiveClick()
-            dialog.dismiss() // Закрыть диалог после нажатия кнопки
+            dialog.dismiss()
         }
-
-        // Устанавливаем отрицательную кнопку и её обработчик
         builder.setNegativeButton(negativeButtonText) { dialog, _ ->
             onNegativeClick()
-            dialog.dismiss() // Закрыть диалог после нажатия кнопки
+            dialog.dismiss()
         }
-
-        // Создаем и отображаем диалог
         val dialog = builder.create()
         dialog.show()
     }
