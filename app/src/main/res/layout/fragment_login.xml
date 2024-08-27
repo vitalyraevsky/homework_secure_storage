@@ -36,6 +36,7 @@
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginStart="32dp"
+        android:textColor="@color/white"
         android:ems="10"
         android:hint="@string/email_hint"
         android:inputType="textEmailAddress"
