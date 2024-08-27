@@ -9,8 +9,10 @@ import javax.inject.Inject
 class AuthRepository
 @Inject constructor(
     private val api: AuthApi,
-    private val preferences: UserPreferences
+    private val preferences: UserPreferences,
+    private val securityRepository: SecurityRepository
 ) : BaseRepository(api) {
+
 
     suspend fun login(
         email: String,
@@ -20,6 +22,6 @@ class AuthRepository
     }
 
     suspend fun saveAccessTokens(accessToken: String, refreshToken: String) {
-        preferences.saveAccessTokens(accessToken, refreshToken)
+        preferences.saveAccessTokens(securityRepository.encryptAes(accessToken), securityRepository.encryptAes(refreshToken))
     }
 }

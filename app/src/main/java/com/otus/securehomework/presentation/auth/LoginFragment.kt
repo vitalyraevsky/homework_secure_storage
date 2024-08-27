@@ -1,11 +1,13 @@
 package com.otus.securehomework.presentation.auth
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
@@ -62,17 +64,28 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         val descryptedStr = security.decryptAes(encryptedStr, key)
         Log.d("TAG", "______ str = $str,   encryptedStr=$encryptedStr, descryptedStr= $descryptedStr")
 
-
         viewModel.loginResponse.observe(viewLifecycleOwner, Observer {
             binding.progressbar.visible(it is Response.Loading)
             when (it) {
                 is Response.Success -> {
-                    lifecycleScope.launch {
-                        viewModel.saveAccessTokens(
-                            it.value.user.access_token!!,
-                            it.value.user.refresh_token!!
-                        )
-                        requireActivity().startNewActivity(HomeActivity::class.java)
+                                lifecycleScope.launch {
+                                    showTwoOptionDialog(
+                                        context = requireContext(),
+                                        title = "Enable biometric authentication?",
+                                        message = "Use your biometric to sign in",
+                                        positiveButtonText = "enable",
+                                        negativeButtonText = "not now",
+                                        onNegativeClick = {
+                                            requireActivity().startNewActivity(HomeActivity::class.java)
+                                        },
+                                        onPositiveClick = {
+                                            requireActivity().startNewActivity(HomeActivity::class.java)
+                                        }
+                                    )
+                                    viewModel.saveAccessTokens(
+                                        it.value.user.access_token!!,
+                                        it.value.user.refresh_token!!
+                                    )
                     }
                 }
                 is Response.Failure -> handleApiError(it) { login() }
@@ -147,6 +160,38 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             Toast.makeText(requireActivity(), "Biometry not supported", Toast.LENGTH_LONG).show()
         }
     }
+
+    fun showTwoOptionDialog(
+        context: Context,
+        title: String,
+        message: String,
+        positiveButtonText: String,
+        negativeButtonText: String,
+        onPositiveClick: () -> Unit,
+        onNegativeClick: () -> Unit
+    ) {
+        val builder = AlertDialog.Builder(context)
+
+        builder.setTitle(title)
+        builder.setMessage(message)
+
+        // Устанавливаем положительную кнопку и её обработчик
+        builder.setPositiveButton(positiveButtonText) { dialog, _ ->
+            onPositiveClick()
+            dialog.dismiss() // Закрыть диалог после нажатия кнопки
+        }
+
+        // Устанавливаем отрицательную кнопку и её обработчик
+        builder.setNegativeButton(negativeButtonText) { dialog, _ ->
+            onNegativeClick()
+            dialog.dismiss() // Закрыть диалог после нажатия кнопки
+        }
+
+        // Создаем и отображаем диалог
+        val dialog = builder.create()
+        dialog.show()
+    }
+
 }
 
 
