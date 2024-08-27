@@ -3,6 +3,8 @@ package com.otus.securehomework.presentation.auth
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -26,8 +28,6 @@ import androidx.lifecycle.lifecycleScope
 import com.otus.securehomework.R
 import com.otus.securehomework.data.Response
 import com.otus.securehomework.data.biometrics.BiometricCipher
-import com.otus.securehomework.data.crypto.Keys
-import com.otus.securehomework.data.crypto.Security
 import com.otus.securehomework.presentation.handleApiError
 import com.otus.securehomework.presentation.home.HomeActivity
 import com.otus.securehomework.presentation.startNewActivity
@@ -35,9 +35,7 @@ import com.otus.securehomework.databinding.FragmentLoginBinding
 import com.otus.securehomework.presentation.enable
 import com.otus.securehomework.presentation.visible
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginFragment : Fragment(R.layout.fragment_login) {
@@ -45,52 +43,54 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private lateinit var binding: FragmentLoginBinding
     private val viewModel by viewModels<AuthViewModel>()
 
-     lateinit var keys : Keys
-     lateinit var security: Security
+    private lateinit var mainHandler: Handler
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         binding = FragmentLoginBinding.bind(view)
+        mainHandler = Handler(Looper.getMainLooper())
 
         binding.progressbar.visible(false)
         binding.buttonLogin.enable(false)
 
-        keys = Keys(requireActivity().applicationContext)
-        security = Security()
-        val key = keys.getAesSecretKey()
-        val str = "hello world!!!<3"
-        val encryptedStr = security.encryptAes(str, key)
-        val descryptedStr = security.decryptAes(encryptedStr, key)
-        Log.d("TAG", "______ str = $str,   encryptedStr=$encryptedStr, descryptedStr= $descryptedStr")
-
         viewModel.loginResponse.observe(viewLifecycleOwner, Observer {
-            binding.progressbar.visible(it is Response.Loading)
-            when (it) {
-                is Response.Success -> {
-                                lifecycleScope.launch {
-                                    showTwoOptionDialog(
-                                        context = requireContext(),
-                                        title = "Enable biometric authentication?",
-                                        message = "Use your biometric to sign in",
-                                        positiveButtonText = "enable",
-                                        negativeButtonText = "not now",
-                                        onNegativeClick = {
-                                            requireActivity().startNewActivity(HomeActivity::class.java)
-                                        },
-                                        onPositiveClick = {
-                                            requireActivity().startNewActivity(HomeActivity::class.java)
-                                        }
-                                    )
-                                    viewModel.saveAccessTokens(
-                                        it.value.user.access_token!!,
-                                        it.value.user.refresh_token!!
-                                    )
+            binding.progressbar.visible(it.response is Response.Loading)
+            if (it.isLoggedIn){
+                    mainHandler.post {
+                        biometricAccess()
+                    }
+            }else{
+                when (it.response) {
+                    is Response.Success -> {
+                        lifecycleScope.launch {
+                            showTwoOptionDialog(
+                                context = requireContext(),
+                                title = "Enable biometric authentication?",
+                                message = "Use your biometric to sign in",
+                                positiveButtonText = "enable",
+                                negativeButtonText = "not now",
+                                onNegativeClick = {
+                                    requireActivity().startNewActivity(HomeActivity::class.java)
+                                },
+                                onPositiveClick = {
+                                    requireActivity().startNewActivity(HomeActivity::class.java)
+                                }
+                            )
+                            viewModel.saveAccessTokens(
+                                it.response.value.user.access_token!!,
+                                it.response.value.user.refresh_token!!
+                            )
+                        }
+                    }
+                    is Response.Failure -> handleApiError(it.response) { login() }
+                    Response.Loading -> Unit
+                    else ->{
+
                     }
                 }
-                is Response.Failure -> handleApiError(it) { login() }
-                Response.Loading -> Unit
             }
+
         })
         binding.editTextTextPassword.addTextChangedListener {
             val email = binding.editTextTextEmailAddress.text.toString().trim()
@@ -110,7 +110,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun weakBiometric() {
+    private fun biometricAccess() {
         if (BiometricManager.from(requireContext())
                 .canAuthenticate(BIOMETRIC_STRONG) == BIOMETRIC_SUCCESS
         ) {

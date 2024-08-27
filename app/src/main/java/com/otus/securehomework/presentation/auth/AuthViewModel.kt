@@ -17,19 +17,36 @@ class AuthViewModel
     private val repository: AuthRepository
 ) : BaseViewModel(repository) {
 
-    private val _loginResponse: MutableLiveData<Response<LoginResponse>> = MutableLiveData()
-    val loginResponse: LiveData<Response<LoginResponse>>
+    private val _loginResponse: MutableLiveData<State> = MutableLiveData(State(null))
+    val loginResponse: LiveData<State>
         get() = _loginResponse
+
+    init {
+        isLoggedIn()
+    }
 
     fun login(
         email: String,
         password: String
     ) = viewModelScope.launch {
-        _loginResponse.value = Response.Loading
-        _loginResponse.value = repository.login(email, password)
+        _loginResponse.value = _loginResponse.value!!.copy(Response.Loading)
+        _loginResponse.value = _loginResponse.value!!.copy(response = repository.login(email, password))
     }
 
     suspend fun saveAccessTokens(accessToken: String, refreshToken: String) {
         repository.saveAccessTokens(accessToken, refreshToken)
     }
+
+    private fun isLoggedIn(){
+        viewModelScope.launch {
+            repository.isLoggedIn().collect{
+                _loginResponse.value = _loginResponse.value!!.copy(isLoggedIn = it)
+            }
+        }
+    }
 }
+
+data class State(
+    val response: Response<LoginResponse>?,
+    val isLoggedIn: Boolean = false
+)
