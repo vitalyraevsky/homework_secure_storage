@@ -1,11 +1,16 @@
 package com.otus.securehomework.di
 
 import android.content.Context
+import android.os.Build
 import com.otus.securehomework.data.repository.AuthRepository
 import com.otus.securehomework.data.repository.UserRepository
 import com.otus.securehomework.data.source.local.UserPreferences
 import com.otus.securehomework.data.source.network.AuthApi
 import com.otus.securehomework.data.source.network.UserApi
+import com.otus.securehomework.domain.security.KeyProvider
+import com.otus.securehomework.domain.security.KeyProviderAboveMApiImpl
+import com.otus.securehomework.domain.security.KeyProviderBelowMApiImpl
+import com.otus.securehomework.domain.security.Security
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,9 +47,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideUserPreferences(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        security: Security
     ): UserPreferences {
-        return UserPreferences(context)
+        return UserPreferences(context, security)
     }
 
     @Provides
@@ -60,5 +66,17 @@ object AppModule {
         userApi: UserApi
     ): UserRepository {
         return UserRepository(userApi)
+    }
+
+    @Singleton
+    @Provides
+    fun provideKeyProvider(
+        @ApplicationContext context: Context
+    ): KeyProvider {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            KeyProviderAboveMApiImpl()
+        } else {
+            KeyProviderBelowMApiImpl(context)
+        }
     }
 }
