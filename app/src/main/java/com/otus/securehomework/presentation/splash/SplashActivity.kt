@@ -2,11 +2,15 @@ package com.otus.securehomework.presentation.splash
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.asLiveData
 import com.otus.securehomework.R
 import com.otus.securehomework.data.source.local.UserPreferences
 import com.otus.securehomework.presentation.auth.AuthActivity
-import com.otus.securehomework.presentation.home.HomeActivity
+import com.otus.securehomework.presentation.getBiometricAuthenticationOpportunityValue
+import com.otus.securehomework.presentation.showMessage
 import com.otus.securehomework.presentation.startNewActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -22,12 +26,25 @@ class SplashActivity  : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         userPreferences.accessToken.asLiveData().observe(this) {
-            val activity = if (it == null) {
-                AuthActivity::class.java
+            if (it == null) {
+                startNewActivity(AuthActivity::class.java)
             } else {
-                HomeActivity::class.java
+                when (val canAuthenticate = getBiometricAuthenticationOpportunityValue()) {
+                    BiometricManager.BIOMETRIC_SUCCESS ->
+                        BiometricPrompt(this, ContextCompat.getMainExecutor(this), getAuthCallback())
+                            .authenticate(biometricPromptInfo)
+
+                    else -> {
+                        startNewActivity(AuthActivity::class.java)
+                        handleError(canAuthenticate)
+                    }
+                }
             }
-            startNewActivity(activity)
         }
+    }
+
+    private fun handleError(canAuthenticate: Int) {
+        val message = getBiometricErrorMessage(canAuthenticate)
+        showMessage(message)
     }
 }

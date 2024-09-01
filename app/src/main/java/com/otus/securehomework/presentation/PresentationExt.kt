@@ -1,8 +1,13 @@
 package com.otus.securehomework.presentation
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.view.View
+import android.widget.Toast
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
@@ -71,3 +76,9 @@ fun Fragment.handleApiError(
         }
     }
 }
+
+internal fun Context.showMessage(message: String) =
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+
+internal fun Context.getBiometricAuthenticationOpportunityValue() =  BiometricManager.from(this)
+    .canAuthenticate(BIOMETRIC_STRONG or BIOMETRIC_WEAK)
