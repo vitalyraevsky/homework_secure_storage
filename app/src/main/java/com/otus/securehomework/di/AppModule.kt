@@ -1,7 +1,9 @@
 package com.otus.securehomework.di
 
 import android.content.Context
-import com.otus.securehomework.data.protection.LegacyKeyManager
+import android.os.Build
+import com.otus.securehomework.data.protection.ITokenManager
+import com.otus.securehomework.data.protection.LegacyTokenManager
 import com.otus.securehomework.data.protection.TokenManager
 import com.otus.securehomework.data.repository.AuthRepository
 import com.otus.securehomework.data.repository.UserRepository
@@ -18,22 +20,16 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-    @Singleton
-    @Provides
-    fun provideLegacyKeyManager(
-        @ApplicationContext context: Context
-    ): LegacyKeyManager {
-        return LegacyKeyManager(context)
-    }
-
     @Singleton
     @Provides
     fun provideTokenManager(
-        @ApplicationContext context: Context,
-        legacyKeyManager: LegacyKeyManager
-    ): TokenManager {
-        return TokenManager(context, legacyKeyManager)
+        @ApplicationContext context: Context
+    ): ITokenManager {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            TokenManager()
+        } else {
+            LegacyTokenManager(context)
+        }
     }
 
     @Singleton

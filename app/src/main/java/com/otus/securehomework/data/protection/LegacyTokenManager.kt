@@ -7,13 +7,14 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 import android.util.Base64
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 import javax.inject.Inject
 
-class LegacyKeyManager @Inject constructor (
+class LegacyTokenManager @Inject constructor (
     private val context: Context
-) {
+) : ITokenManager {
     companion object {
         const val PREFS_NAME = "key_prefs"
         const val SECRET_KEY_ALIAS = "encrypted_secret_key"
@@ -76,7 +77,7 @@ class LegacyKeyManager @Inject constructor (
         return encryptedKey?.let { decryptSecretKey(it, password) }
     }
 
-    fun getOrGenerateLegacyKey(): SecretKey {
+    private fun getSecretKey(): SecretKey {
         //Думаю надо сюда передавать какие то данные пользователя
         val password = "user_defined_password_or_pin"
         return getSecretKey(password) ?: generateLegacyKey().also {
@@ -90,12 +91,11 @@ class LegacyKeyManager @Inject constructor (
         return keyGenerator.generateKey()
     }
 
-    fun encryptTokenLegacy(
-        token: String,
-        secretKey: SecretKey
+    override fun encryptToken(
+        token: String
     ): String {
         val cipher = Cipher.getInstance(TRANSFORMATION_AES_CBC)
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey)
+        cipher.init(Cipher.ENCRYPT_MODE, getSecretKey())
         val iv = cipher.iv
         val encryptedData = cipher.doFinal(token.toByteArray(Charsets.UTF_8))
 
@@ -104,9 +104,8 @@ class LegacyKeyManager @Inject constructor (
         return "$ivBase64:$encryptedBase64"
     }
 
-    fun decryptTokenLegacy(
-        encryptedToken: String,
-        secretKey: SecretKey
+    override fun decryptToken(
+        encryptedToken: String
     ): String {
         val (ivBase64, encryptedBase64) = encryptedToken.split(":")
         val iv = Base64.decode(ivBase64, Base64.DEFAULT)
@@ -114,7 +113,7 @@ class LegacyKeyManager @Inject constructor (
 
         val cipher = Cipher.getInstance(TRANSFORMATION_AES_CBC)
         val spec = IvParameterSpec(iv)
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, spec)
+        cipher.init(Cipher.DECRYPT_MODE, getSecretKey(), spec)
         val originalData = cipher.doFinal(encryptedData)
         return String(originalData, Charsets.UTF_8)
     }

@@ -1,6 +1,5 @@
 package com.otus.securehomework.data.protection
 
-import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import java.security.KeyStore
@@ -11,10 +10,8 @@ import javax.crypto.spec.GCMParameterSpec
 import android.util.Base64
 import javax.inject.Inject
 
-class TokenManager @Inject constructor (
-    private val context: Context,
-    private val legacyKeyManager: LegacyKeyManager
-) {
+@RequiresApi(Build.VERSION_CODES.M)
+class TokenManager @Inject constructor () : ITokenManager {
 
     companion object {
         const val TRANSFORMATION_AES_GCM = "AES/GCM/NoPadding"
@@ -25,15 +22,6 @@ class TokenManager @Inject constructor (
     }
 
     private fun getSecretKey(): SecretKey {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getSecretKeyApi23()
-        } else {
-            legacyKeyManager.getOrGenerateLegacyKey()
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun getSecretKeyApi23(): SecretKey {
         val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
         // Проверяем, существует ли ключ
         val existingKey = keyStore.getKey(AES, null) as SecretKey?
@@ -55,23 +43,14 @@ class TokenManager @Inject constructor (
         return keyGenerator.generateKey()
     }
 
-    fun encryptToken(token: String): String {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            encryptTokenApi23(token)
-        } else {
-            legacyKeyManager.encryptTokenLegacy(token, getSecretKey())
-        }
+    override fun encryptToken(token: String): String {
+        return encryptTokenApi23(token)
     }
 
-    fun decryptToken(encryptedToken: String): String? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            decryptTokenApi23(encryptedToken)
-        } else {
-            legacyKeyManager.decryptTokenLegacy(encryptedToken, getSecretKey())
-        }
+    override fun decryptToken(encryptedToken: String): String? {
+        return decryptTokenApi23(encryptedToken)
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     private fun encryptTokenApi23(token: String): String {
         val cipher = Cipher.getInstance(TRANSFORMATION_AES_GCM)
         cipher.init(Cipher.ENCRYPT_MODE, getSecretKey())
@@ -83,8 +62,7 @@ class TokenManager @Inject constructor (
         return "$ivBase64:$encryptedBase64"
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun decryptTokenApi23(encryptedToken: String): String? {
+    private fun decryptTokenApi23(encryptedToken: String): String {
         val (ivBase64, encryptedBase64) = encryptedToken.split(":")
         val iv = Base64.decode(ivBase64, Base64.DEFAULT)
         val encryptedData = Base64.decode(encryptedBase64, Base64.DEFAULT)

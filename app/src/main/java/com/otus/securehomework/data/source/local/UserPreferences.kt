@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.otus.securehomework.data.protection.TokenManager
+import com.otus.securehomework.data.protection.ITokenManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -14,7 +14,7 @@ private const val dataStoreFile: String = "securePref"
 class UserPreferences
 @Inject constructor(
     private val context: Context,
-    private val tokenManager: TokenManager
+    private val tokenManager: ITokenManager
 ) {
 
     val accessToken: Flow<String?>
