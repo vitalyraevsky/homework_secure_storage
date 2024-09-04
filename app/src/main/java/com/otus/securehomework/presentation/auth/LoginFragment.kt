@@ -1,7 +1,11 @@
 package com.otus.securehomework.presentation.auth
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.biometric.BiometricPrompt
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -54,11 +58,48 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         binding.buttonLogin.setOnClickListener {
             login()
         }
+
+        // Проверяем, включена ли биометрическая аутентификация, и запускаем её
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            viewModel.isBiometricEnabled.observe(viewLifecycleOwner, Observer { enabled ->
+                if (enabled) {
+                    viewModel.setupBiometricAuth(requireActivity(), biometricCallback)
+                }
+            })
+
+            viewModel.enableBiometricAuth(true)
+        }
     }
 
     private fun login() {
         val email = binding.editTextTextEmailAddress.text.toString().trim()
         val password = binding.editTextTextPassword.text.toString().trim()
         viewModel.login(email, password)
+    }
+
+    private fun showToast(message: String){
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+    }
+
+    // Callback для обработки результатов биометрической аутентификации
+    private val biometricCallback = object : BiometricPrompt.AuthenticationCallback() {
+        @RequiresApi(Build.VERSION_CODES.M)
+        override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+            super.onAuthenticationSucceeded(result)
+            // Здесь вы можете получить доступ к расшифрованным данным и продолжить процесс входа
+            lifecycleScope.launch {
+                val decryptedToken = viewModel.decryptAccessToken()
+                if (decryptedToken != null) {
+                    // Продолжить с использованием расшифрованного токена
+                    requireActivity().startNewActivity(HomeActivity::class.java)
+                }
+            }
+        }
+
+        override fun onAuthenticationFailed() {
+            showToast("Biometry not supported");
+            super.onAuthenticationFailed()
+            // Обработка ошибки аутентификации
+        }
     }
 }

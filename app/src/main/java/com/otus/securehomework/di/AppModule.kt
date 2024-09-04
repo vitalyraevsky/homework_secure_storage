@@ -2,6 +2,7 @@ package com.otus.securehomework.di
 
 import android.content.Context
 import android.os.Build
+import com.otus.securehomework.data.protection.BiometricManager
 import com.otus.securehomework.data.protection.ITokenManager
 import com.otus.securehomework.data.protection.LegacyTokenManager
 import com.otus.securehomework.data.protection.TokenManager
@@ -20,6 +21,15 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Singleton
+    @Provides
+    fun provideBiometricManager(
+        @ApplicationContext context: Context
+    ): BiometricManager {
+        return BiometricManager(context)
+    }
+
     @Singleton
     @Provides
     fun provideTokenManager(
