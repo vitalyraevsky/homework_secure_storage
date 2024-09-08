@@ -3,6 +3,9 @@ package com.otus.securehomework.presentation
 import android.app.Activity
 import android.content.Intent
 import android.view.View
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
@@ -58,6 +61,7 @@ fun Fragment.handleApiError(
             R.string.error_internet,
             retry
         )
+
         failure.errorCode == 401 -> {
             if (this is LoginFragment) {
                 requireView().snackbar(R.string.error_enter)
@@ -65,9 +69,15 @@ fun Fragment.handleApiError(
                 logout()
             }
         }
+
         else -> {
             val error = failure.errorBody?.string().toString()
             requireView().snackbar(error)
         }
     }
+}
+
+fun BiometricManager.isBiometricAvailable(): Boolean {
+    return canAuthenticate(BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS ||
+            canAuthenticate(BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS
 }
