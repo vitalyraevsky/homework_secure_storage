@@ -1,6 +1,8 @@
 package com.otus.securehomework.di
 
 import android.content.Context
+import com.otus.securehomework.data.biometrics.DefaultKeySpecProvider
+import com.otus.securehomework.data.biometrics.KeySpecProvider
 import com.otus.securehomework.data.crypto.Keys
 import com.otus.securehomework.data.crypto.Security
 import com.otus.securehomework.data.repository.AuthRepository
@@ -80,5 +82,10 @@ object AppModule {
         userApi: UserApi
     ): UserRepository {
         return UserRepository(userApi)
+    }
+
+    @Provides
+    fun provideKeySpecProvider(@ApplicationContext context: Context): KeySpecProvider {
+        return DefaultKeySpecProvider(context)
     }
 }
