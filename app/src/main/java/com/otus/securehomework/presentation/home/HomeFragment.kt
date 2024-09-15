@@ -26,20 +26,22 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         viewModel.getUser()
 
-        viewModel.user.observe(viewLifecycleOwner, {
+        viewModel.user.observe(viewLifecycleOwner) {
             when (it) {
                 is Response.Success -> {
                     binding.progressbar.visible(false)
                     updateUI(it.value.user)
                 }
+
                 is Response.Loading -> {
                     binding.progressbar.visible(true)
                 }
+
                 is Response.Failure -> {
                     handleApiError(it)
                 }
             }
-        })
+        }
 
         binding.buttonLogout.setOnClickListener {
             logout()

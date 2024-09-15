@@ -14,4 +14,22 @@
     <string name="forgot_your_password">Forgot your password?</string>
     <string name="register_now">Register Now</string>
     <string name="already_have_an_account_login_now">Already have an account? <b>Login Now</b></string>
+
+    <string name="enable_biometric_authentication">Enable biometric authentication?</string>
+    <string name="use_your_biometric_to_sign_in">Use your biometric to sign in</string>
+    <string name="enable">enable</string>
+    <string name="not_now">not now</string>
+
+    <string name="strong_biometry">Strong biometry</string>
+    <string name="dismiss">dismiss</string>
+    <string name="input_your_biometry">Input your biometry</string>
+    <string name="we_need_your_finger">We need your finger</string>
+
+    <string name="secret_data">Secret data</string>
+    <string name="weak_biometry">Weak biometry</string>
+
+    <string name="biometry_not_supported">Biometry not supported</string>
+
+
+
 </resources>
