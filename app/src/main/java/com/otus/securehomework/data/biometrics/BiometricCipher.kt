@@ -13,8 +13,10 @@ import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
+import javax.inject.Inject
 
-private const val KEYSTORE_PROVIDER = "AndroidKeyStore" // Константа, определяющая провайдера для AndroidKeyStore
+private const val KEYSTORE_PROVIDER =
+    "AndroidKeyStore" // Константа, определяющая провайдера для AndroidKeyStore
 private const val AUTH_TAG_SIZE = 128 // Размер аутентификационного тега для шифрования GCM
 
 @RequiresApi(Build.VERSION_CODES.M)
@@ -22,7 +24,7 @@ private const val TRANSFORMATION = "$KEY_ALGORITHM_AES/" +
         "$BLOCK_MODE_GCM/" +
         ENCRYPTION_PADDING_NONE // Строка, которая определяет алгоритм шифрования (AES в режиме GCM без заполнения)
 
-class BiometricCipher( // Класс для шифрования и дешифрования с использованием биометрии
+class BiometricCipher @Inject constructor( // Класс для шифрования и дешифрования с использованием биометрии
     private val applicationContext: Context, // Контекст приложения, используемый для получения ресурсов, ключей и др.
     private val keySpec: KeyGenParameterSpec
 ) {
@@ -32,7 +34,10 @@ class BiometricCipher( // Класс для шифрования и дешифр
     @RequiresApi(Build.VERSION_CODES.M)
     fun getEncryptor(): BiometricPrompt.CryptoObject {
         val encryptor = Cipher.getInstance(TRANSFORMATION).apply { // Создание объекта шифрования
-            init(Cipher.ENCRYPT_MODE, getOrCreateKey()) // Инициализация шифра в режиме шифрования с использованием ключа
+            init(
+                Cipher.ENCRYPT_MODE,
+                getOrCreateKey()
+            ) // Инициализация шифра в режиме шифрования с использованием ключа
         }
 
         return BiometricPrompt.CryptoObject(encryptor) // Возврат объекта шифрования, обернутого в BiometricPrompt.CryptoObject
@@ -42,7 +47,11 @@ class BiometricCipher( // Класс для шифрования и дешифр
     @RequiresApi(Build.VERSION_CODES.M)
     fun getDecryptor(iv: ByteArray): BiometricPrompt.CryptoObject {
         val decryptor = Cipher.getInstance(TRANSFORMATION).apply { // Создание объекта шифрования
-            init(Cipher.DECRYPT_MODE, getOrCreateKey(), GCMParameterSpec(AUTH_TAG_SIZE, iv)) // Инициализация шифра в режиме дешифрования с использованием ключа и вектора инициализации (IV)
+            init(
+                Cipher.DECRYPT_MODE,
+                getOrCreateKey(),
+                GCMParameterSpec(AUTH_TAG_SIZE, iv)
+            ) // Инициализация шифра в режиме дешифрования с использованием ключа и вектора инициализации (IV)
         }
         return BiometricPrompt.CryptoObject(decryptor) // Возврат объекта дешифрования, обернутого в BiometricPrompt.CryptoObject
     }
@@ -66,9 +75,10 @@ class BiometricCipher( // Класс для шифрования и дешифр
     // Метод для получения или создания секретного ключа (SecretKey) в AndroidKeyStore
     @RequiresApi(Build.VERSION_CODES.M)
     private fun getOrCreateKey(): SecretKey {
-        val keystore = KeyStore.getInstance(KEYSTORE_PROVIDER).apply { // Получение экземпляра KeyStore для AndroidKeyStore
-            load(null) // Загрузка KeyStore
-        }
+        val keystore = KeyStore.getInstance(KEYSTORE_PROVIDER)
+            .apply { // Получение экземпляра KeyStore для AndroidKeyStore
+                load(null) // Загрузка KeyStore
+            }
 
         // Если ключ уже существует, он возвращается
         keystore.getKey(keyAlias, null)?.let { key ->

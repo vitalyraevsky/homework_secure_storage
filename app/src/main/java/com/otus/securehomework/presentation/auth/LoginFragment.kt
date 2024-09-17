@@ -28,7 +28,6 @@ import androidx.lifecycle.lifecycleScope
 import com.otus.securehomework.R
 import com.otus.securehomework.data.Response
 import com.otus.securehomework.data.biometrics.BiometricCipher
-import com.otus.securehomework.data.biometrics.KeySpecProvider
 import com.otus.securehomework.presentation.handleApiError
 import com.otus.securehomework.presentation.home.HomeActivity
 import com.otus.securehomework.presentation.startNewActivity
@@ -43,8 +42,8 @@ import javax.inject.Inject
 class LoginFragment : Fragment(R.layout.fragment_login) {
     private val keyAlias by lazy { "${requireActivity().applicationContext.packageName}.biometricKey"}
 
-    @Inject
-    lateinit var keySpecProvider: KeySpecProvider
+@Inject
+   lateinit var biometricCipher : BiometricCipher
 
     private lateinit var binding: FragmentLoginBinding
     private val viewModel by viewModels<AuthViewModel>()
@@ -120,7 +119,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         if (BiometricManager.from(requireContext())
                 .canAuthenticate(BIOMETRIC_STRONG) == BIOMETRIC_SUCCESS
         ) {
-            val biometricCipher = BiometricCipher(requireActivity().applicationContext, keySpecProvider.provideKeyGenParameterSpec(keyAlias))
+//            val biometricCipher = BiometricCipher(requireActivity().applicationContext, keySpecProvider.provideKeyGenParameterSpec(keyAlias))
             val encryptor = biometricCipher.getEncryptor()
             val authPrompt = Class3BiometricAuthPrompt.Builder(requireContext().getString(R.string.strong_biometry), requireContext().getString(R.string.dismiss)).apply {
                 setSubtitle(requireContext().getString(R.string.input_your_biometry))
