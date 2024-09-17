@@ -36,9 +36,14 @@ import com.otus.securehomework.presentation.enable
 import com.otus.securehomework.presentation.visible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginFragment : Fragment(R.layout.fragment_login) {
+    private val keyAlias by lazy { "${requireActivity().applicationContext.packageName}.biometricKey"}
+
+@Inject
+   lateinit var biometricCipher : BiometricCipher
 
     private lateinit var binding: FragmentLoginBinding
     private val viewModel by viewModels<AuthViewModel>()
@@ -114,7 +119,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         if (BiometricManager.from(requireContext())
                 .canAuthenticate(BIOMETRIC_STRONG) == BIOMETRIC_SUCCESS
         ) {
-            val biometricCipher = BiometricCipher(requireActivity().applicationContext)
+//            val biometricCipher = BiometricCipher(requireActivity().applicationContext, keySpecProvider.provideKeyGenParameterSpec(keyAlias))
             val encryptor = biometricCipher.getEncryptor()
             val authPrompt = Class3BiometricAuthPrompt.Builder(requireContext().getString(R.string.strong_biometry), requireContext().getString(R.string.dismiss)).apply {
                 setSubtitle(requireContext().getString(R.string.input_your_biometry))
