@@ -40,10 +40,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginFragment : Fragment(R.layout.fragment_login) {
-    private val keyAlias by lazy { "${requireActivity().applicationContext.packageName}.biometricKey"}
-
-@Inject
-   lateinit var biometricCipher : BiometricCipher
+    @Inject
+    lateinit var biometricCipher: BiometricCipher
 
     private lateinit var binding: FragmentLoginBinding
     private val viewModel by viewModels<AuthViewModel>()
@@ -61,11 +59,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         viewModel.loginResponse.observe(viewLifecycleOwner, Observer {
             binding.progressbar.visible(it.response is Response.Loading)
-            if (it.isLoggedIn){
-                    mainHandler.post {
-                        biometricAccess()
-                    }
-            }else{
+            if (it.isLoggedIn) {
+                mainHandler.post {
+                    biometricAccess()
+                }
+            } else {
                 when (it.response) {
                     is Response.Success -> {
                         lifecycleScope.launch {
@@ -88,9 +86,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                             )
                         }
                     }
+
                     is Response.Failure -> handleApiError(it.response) { login() }
                     Response.Loading -> Unit
-                    else ->{
+                    else -> {
 
                     }
                 }
@@ -113,15 +112,16 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
 
-
     @RequiresApi(Build.VERSION_CODES.M)
     private fun biometricAccess() {
         if (BiometricManager.from(requireContext())
                 .canAuthenticate(BIOMETRIC_STRONG) == BIOMETRIC_SUCCESS
         ) {
-//            val biometricCipher = BiometricCipher(requireActivity().applicationContext, keySpecProvider.provideKeyGenParameterSpec(keyAlias))
             val encryptor = biometricCipher.getEncryptor()
-            val authPrompt = Class3BiometricAuthPrompt.Builder(requireContext().getString(R.string.strong_biometry), requireContext().getString(R.string.dismiss)).apply {
+            val authPrompt = Class3BiometricAuthPrompt.Builder(
+                requireContext().getString(R.string.strong_biometry),
+                requireContext().getString(R.string.dismiss)
+            ).apply {
                 setSubtitle(requireContext().getString(R.string.input_your_biometry))
                 setDescription(requireContext().getString(R.string.we_need_your_finger))
                 setConfirmationRequired(true)
@@ -131,7 +131,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     val authResult =
                         authPrompt.authenticate(AuthPromptHost(requireActivity()), encryptor)
                     val encryptedEntity = authResult.cryptoObject?.cipher?.let { cipher ->
-                        biometricCipher.encrypt(requireContext().getString(R.string.secret_data), cipher)
+                        biometricCipher.encrypt(
+                            requireContext().getString(R.string.secret_data),
+                            cipher
+                        )
                     }
                     Log.d(AuthActivity::class.simpleName, String(encryptedEntity!!.ciphertext))
                     requireActivity().startNewActivity(HomeActivity::class.java)
@@ -145,7 +148,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 .canAuthenticate(BIOMETRIC_WEAK) == BIOMETRIC_SUCCESS
         ) {
             val authPrompt =
-                Class2BiometricAuthPrompt.Builder(requireContext().getString(R.string.weak_biometry), requireContext().getString(R.string.dismiss)).apply {
+                Class2BiometricAuthPrompt.Builder(
+                    requireContext().getString(R.string.weak_biometry),
+                    requireContext().getString(R.string.dismiss)
+                ).apply {
                     setSubtitle(requireContext().getString(R.string.input_your_biometry))
                     setDescription(requireContext().getString(R.string.we_need_your_finger))
                     setConfirmationRequired(true)
@@ -161,7 +167,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 }
             }
         } else {
-            Toast.makeText(requireActivity(), requireContext().getString(R.string.biometry_not_supported), Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                requireActivity(),
+                requireContext().getString(R.string.biometry_not_supported),
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
@@ -188,7 +198,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         val dialog = builder.create()
         dialog.show()
     }
-
 }
 
 
