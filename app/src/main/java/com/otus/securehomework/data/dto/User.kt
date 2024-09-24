@@ -7,6 +7,6 @@ data class User(
     val email_verified_at: Any,
     val created_at: String,
     val updated_at: String,
-    val access_token: String?,
-    val refresh_token: String?
+    val access_token: CharSequence?,
+    val refresh_token: CharSequence?
 )
