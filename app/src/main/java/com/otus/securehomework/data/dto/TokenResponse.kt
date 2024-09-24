@@ -1,6 +1,6 @@
 package com.otus.securehomework.data.dto
 
 data class TokenResponse(
-    val access_token: String?,
-    val refresh_token: String?
+    val access_token: CharSequence?,
+    val refresh_token: CharSequence?
 )
