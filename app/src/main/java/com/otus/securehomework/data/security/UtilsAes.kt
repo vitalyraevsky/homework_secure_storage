@@ -11,7 +11,7 @@ class UtilsAes @Inject constructor() {
 
     fun encryptAes(data: CharSequence, key: Key): String {
         val cipher = Cipher.getInstance(AES_TRANSFORMATION)
-        cipher.init(Cipher.ENCRYPT_MODE, key, getInitializationVector())
+        cipher.init(Cipher.ENCRYPT_MODE, key)
         val encodedBytes = cipher.doFinal(data.toByteArray())
         return Base64.encodeToString(encodedBytes, Base64.NO_WRAP)
     }
@@ -33,7 +33,7 @@ class UtilsAes @Inject constructor() {
         ByteArray(length) { offset: Int -> this[offset].code.toByte() }
 
     companion object {
-        private const val AES_TRANSFORMATION = "AES/GCM/NoPadding"
+        private const val AES_TRANSFORMATION = "AES/CBC/PKCS7Padding"
         private const val IV = "3134003223491201"
         private const val GCM_IV_LENGTH = 12
     }
