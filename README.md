@@ -1,5 +1,3 @@
-# In progress ...
-
 # Secure Storage
 
 OTUS Репозиторий домашней работы по безопасности
