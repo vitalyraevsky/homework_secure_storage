@@ -1,6 +1,11 @@
 package com.otus.securehomework.di
 
 import android.content.Context
+import android.os.Build
+import com.otus.securehomework.data.encryptor.Encryptor
+import com.otus.securehomework.data.keymanager.SecretKeyManager
+import com.otus.securehomework.data.keymanager.SecretKeyManagerAboveApi23
+import com.otus.securehomework.data.keymanager.SecretKeyManagerLessApi23
 import com.otus.securehomework.data.repository.AuthRepository
 import com.otus.securehomework.data.repository.UserRepository
 import com.otus.securehomework.data.source.local.UserPreferences
@@ -42,9 +47,10 @@ object AppModule {
     @Singleton
     @Provides
     fun provideUserPreferences(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        encryptor: Encryptor
     ): UserPreferences {
-        return UserPreferences(context)
+        return UserPreferences(context, encryptor)
     }
 
     @Provides
@@ -60,5 +66,16 @@ object AppModule {
         userApi: UserApi
     ): UserRepository {
         return UserRepository(userApi)
+    }
+
+    @Provides
+    fun provideSecretKeyManager(
+        @ApplicationContext context: Context
+    ): SecretKeyManager {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            SecretKeyManagerAboveApi23()
+        } else {
+            SecretKeyManagerLessApi23(context)
+        }
     }
 }
