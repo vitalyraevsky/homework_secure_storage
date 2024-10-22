@@ -10,6 +10,7 @@
     <domain-config>
         <domain includeSubdomains="true">auth.tragltech.com</domain>
         <pin-set>
+            <pin digest="SHA-256">UVA9DmuYVZHUqD5jSGXQNWCIzU029GkUNjj/ehxWg8I=</pin>
             <pin digest="SHA-256">LuIox5xjUPjzKcsWojPt6nk5Gn4Ji5iNqvqiIRUiNhM=</pin>
             <pin digest="SHA-256">0Bbh/jEZSKymTy3kTOhsmlHKBB32EDu1KojrP3YfV9c=</pin>
             <pin digest="SHA-256">5G3Z6CXMcICmkYjw0AX/rvU+5ZDVypw2yAheMiYOKXI=</pin>
